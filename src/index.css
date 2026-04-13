@@ -18,6 +18,9 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
 }
 
 ::-webkit-scrollbar {
@@ -37,4 +40,17 @@ html.dark ::-webkit-scrollbar-thumb {
 html:not(.dark) ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 3px;
+}
+
+@media (pointer: coarse) {
+  input[type="number"],
+  input[type="text"],
+  select {
+    font-size: 16px;
+  }
+
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

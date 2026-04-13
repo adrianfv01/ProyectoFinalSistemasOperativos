@@ -14,7 +14,7 @@ export default function ReplacementPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-100">
+      <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">
         Reemplazo de Páginas
       </h1>
 

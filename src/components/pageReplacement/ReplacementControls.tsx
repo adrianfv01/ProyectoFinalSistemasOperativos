@@ -46,19 +46,19 @@ export default function ReplacementControls() {
 
   return (
     <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+        <div className="flex items-center justify-center gap-2">
           <button
             onClick={stepBackward}
             disabled={currentStep === 0}
-            className="rounded-lg border border-gray-600 p-2 text-gray-300 transition hover:bg-gray-700 disabled:opacity-40"
+            className="rounded-lg border border-gray-600 p-2.5 text-gray-300 transition hover:bg-gray-700 disabled:opacity-40"
           >
             <SkipBack size={16} />
           </button>
 
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="rounded-lg bg-indigo-600 p-2 text-white transition hover:bg-indigo-500"
+            className="rounded-lg bg-indigo-600 p-2.5 text-white transition hover:bg-indigo-500"
           >
             {isPlaying ? <Pause size={16} /> : <Play size={16} />}
           </button>
@@ -66,13 +66,13 @@ export default function ReplacementControls() {
           <button
             onClick={stepForward}
             disabled={currentStep >= total - 1}
-            className="rounded-lg border border-gray-600 p-2 text-gray-300 transition hover:bg-gray-700 disabled:opacity-40"
+            className="rounded-lg border border-gray-600 p-2.5 text-gray-300 transition hover:bg-gray-700 disabled:opacity-40"
           >
             <SkipForward size={16} />
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <label className="text-sm text-gray-400">Velocidad</label>
           <input
             type="range"
@@ -86,7 +86,7 @@ export default function ReplacementControls() {
           <span className="w-10 text-sm text-gray-300">{speed}x</span>
         </div>
 
-        <div className="ml-auto flex items-center gap-3 text-sm">
+        <div className="flex items-center justify-center gap-3 text-sm sm:ml-auto">
           <span className="text-red-400">
             Fallos: {faults}
           </span>

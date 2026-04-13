@@ -61,7 +61,7 @@ export default function MemoryPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-100">Memoria</h1>
+      <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">Memoria</h1>
 
       {processes.length === 0 ? (
         <div className="rounded-xl border border-gray-700 bg-gray-900 p-10 text-center">
@@ -90,10 +90,10 @@ export default function MemoryPage() {
             </div>
           </div>
 
-          <div className="flex">
+          <div>
             <button
               onClick={handleAllocate}
-              className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500"
+              className="w-full rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500 sm:w-auto"
             >
               Asignar páginas
             </button>

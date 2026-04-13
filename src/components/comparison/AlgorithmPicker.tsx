@@ -51,18 +51,18 @@ export default function AlgorithmPicker({ onCompare, disabled }: AlgorithmPicker
   }
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-800/60 p-5">
+    <div className="rounded-xl border border-gray-700 bg-gray-800/60 p-4 sm:p-5">
       <div className="grid gap-6 md:grid-cols-2">
         <fieldset>
           <legend className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-200">
             <Settings2 size={16} className="text-indigo-400" />
             Algoritmos de planificación
           </legend>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {SCHEDULING_KEYS.map((key) => (
               <label
                 key={key}
-                className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 bg-gray-900/50 px-3 py-2 text-sm transition hover:border-indigo-500/50"
+                className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 bg-gray-900/50 px-3 py-2.5 text-sm transition hover:border-indigo-500/50"
               >
                 <input
                   type="checkbox"
@@ -81,11 +81,11 @@ export default function AlgorithmPicker({ onCompare, disabled }: AlgorithmPicker
             <Settings2 size={16} className="text-emerald-400" />
             Algoritmos de reemplazo de página
           </legend>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {REPLACEMENT_KEYS.map((key) => (
               <label
                 key={key}
-                className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 bg-gray-900/50 px-3 py-2 text-sm transition hover:border-emerald-500/50"
+                className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-700 bg-gray-900/50 px-3 py-2.5 text-sm transition hover:border-emerald-500/50"
               >
                 <input
                   type="checkbox"
@@ -100,9 +100,9 @@ export default function AlgorithmPicker({ onCompare, disabled }: AlgorithmPicker
         </fieldset>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-end gap-4">
+      <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
         {needsQuantum && (
-          <div>
+          <div className="w-full sm:w-auto">
             <label className="mb-1 block text-xs text-gray-400">
               Quantum (RR / MLQ / MLFQ)
             </label>
@@ -112,7 +112,7 @@ export default function AlgorithmPicker({ onCompare, disabled }: AlgorithmPicker
               max={100}
               value={quantum}
               onChange={(e) => setQuantum(Math.max(1, Number(e.target.value)))}
-              className="w-24 rounded-lg border border-gray-600 bg-gray-900 px-3 py-2 text-sm text-gray-200 focus:border-indigo-500 focus:outline-none"
+              className="w-full rounded-lg border border-gray-600 bg-gray-900 px-3 py-2.5 text-sm text-gray-200 focus:border-indigo-500 focus:outline-none sm:w-24"
             />
           </div>
         )}
@@ -120,7 +120,7 @@ export default function AlgorithmPicker({ onCompare, disabled }: AlgorithmPicker
         <button
           onClick={handleCompare}
           disabled={!hasSelection || disabled}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
         >
           <Play size={16} />
           Comparar

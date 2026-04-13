@@ -11,7 +11,7 @@ export default function SchedulingPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-gray-100">Planificación de CPU</h1>
+      <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">Planificación de CPU</h1>
 
       <AlgorithmSelector />
 
@@ -20,10 +20,12 @@ export default function SchedulingPage() {
           <GanttChart />
           <SimulationControls />
 
-          <div className="grid gap-4 lg:grid-cols-[1fr_auto_2fr]">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_auto_2fr]">
             <ReadyQueue />
             <CpuDisplay />
-            <SchedulingMetrics />
+            <div className="sm:col-span-2 lg:col-span-1">
+              <SchedulingMetrics />
+            </div>
           </div>
         </>
       ) : (

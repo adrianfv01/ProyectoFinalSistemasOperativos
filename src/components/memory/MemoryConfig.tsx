@@ -52,7 +52,7 @@ export default function MemoryConfig() {
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-sm text-gray-400">
           Marcos calculados:{' '}
           <span className="font-semibold text-indigo-400">{calculatedFrames}</span>
@@ -61,7 +61,7 @@ export default function MemoryConfig() {
         <button
           onClick={handleApply}
           disabled={localTotal <= 0 || localPage <= 0}
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
+          className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
         >
           Aplicar configuración
         </button>

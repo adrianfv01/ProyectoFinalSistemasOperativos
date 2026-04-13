@@ -20,8 +20,8 @@ export default function ProcessesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-100">Captura de Procesos</h1>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">Captura de Procesos</h1>
         {processes.length > 0 && (
           <button
             onClick={clearAll}

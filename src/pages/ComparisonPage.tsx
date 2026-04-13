@@ -70,8 +70,8 @@ export default function ComparisonPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <BarChart3 size={24} className="text-indigo-400" />
-        <h1 className="text-2xl font-bold text-gray-100">Comparación de algoritmos</h1>
+        <BarChart3 size={24} className="shrink-0 text-indigo-400" />
+        <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">Comparación de algoritmos</h1>
       </div>
 
       <AlgorithmPicker onCompare={handleCompare} />

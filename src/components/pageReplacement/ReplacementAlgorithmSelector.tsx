@@ -31,15 +31,15 @@ export default function ReplacementAlgorithmSelector() {
         Configuración del algoritmo
       </h2>
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+        <div className="flex w-full flex-col gap-1 sm:w-auto">
           <label className="text-sm text-gray-400">Algoritmo</label>
           <select
             value={selectedAlgorithm}
             onChange={(e) =>
               setSelectedAlgorithm(e.target.value as ReplacementAlgorithmName)
             }
-            className="rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-gray-100 outline-none focus:border-indigo-500"
+            className="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2.5 text-sm text-gray-100 outline-none focus:border-indigo-500 sm:w-auto"
           >
             {algorithmKeys.map((key) => (
               <option key={key} value={key}>
@@ -49,7 +49,7 @@ export default function ReplacementAlgorithmSelector() {
           </select>
         </div>
 
-        <div className="flex flex-col gap-1">
+        <div className="flex w-full flex-col gap-1 sm:w-auto">
           <label className="text-sm text-gray-400">Marcos de página</label>
           <input
             type="number"
@@ -60,26 +60,28 @@ export default function ReplacementAlgorithmSelector() {
               const v = parseInt(e.target.value, 10)
               if (!isNaN(v) && v > 0) setFrames(v)
             }}
-            className="w-24 rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm text-gray-100 outline-none focus:border-indigo-500"
+            className="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2.5 text-sm text-gray-100 outline-none focus:border-indigo-500 sm:w-24"
           />
         </div>
 
-        <button
-          onClick={handleRun}
-          disabled={processes.length === 0}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <Play size={16} />
-          Ejecutar
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleRun}
+            disabled={processes.length === 0}
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40 sm:flex-none"
+          >
+            <Play size={16} />
+            Ejecutar
+          </button>
 
-        <button
-          onClick={reset}
-          className="flex items-center gap-2 rounded-lg border border-gray-600 px-4 py-2 text-sm font-medium text-gray-300 transition hover:bg-gray-700"
-        >
-          <RotateCcw size={16} />
-          Reiniciar
-        </button>
+          <button
+            onClick={reset}
+            className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-600 px-4 py-2.5 text-sm font-medium text-gray-300 transition hover:bg-gray-700 sm:flex-none"
+          >
+            <RotateCcw size={16} />
+            Reiniciar
+          </button>
+        </div>
       </div>
 
       {processes.length === 0 && (

@@ -77,14 +77,12 @@ export default function ThreadManager({ selectedPid }: Props) {
                 transition={{ duration: 0.15 }}
                 className="mb-2 flex items-center justify-between rounded-lg border border-gray-700 bg-gray-800 px-3 py-2"
               >
-                <div className="flex items-center gap-3">
-                  <Cpu size={14} className="text-gray-500" />
-                  <div>
-                    <span className="text-sm font-medium text-gray-200">TID {t.tid}</span>
-                    <span className="ml-3 text-xs text-gray-400">
-                      Ráfaga: {t.burstTime} &middot; Rest.: {t.remainingTime}
-                    </span>
-                  </div>
+                <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                  <Cpu size={14} className="shrink-0 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-200">TID {t.tid}</span>
+                  <span className="text-xs text-gray-400">
+                    Ráfaga: {t.burstTime} / Rest.: {t.remainingTime}
+                  </span>
                   <span className="rounded bg-gray-700 px-1.5 py-0.5 text-[10px] text-gray-400">
                     {STATE_LABELS[t.state]}
                   </span>

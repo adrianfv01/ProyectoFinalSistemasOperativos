@@ -27,7 +27,7 @@ export default function PageTable({ pageTables, pids }: Props) {
 
   return (
     <div className="rounded-xl border border-gray-700 bg-gray-900 p-5">
-      <div className="mb-4 flex items-center gap-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-300">
           Tabla de páginas
         </h3>
@@ -35,7 +35,7 @@ export default function PageTable({ pageTables, pids }: Props) {
         <select
           value={selectedPid ?? ''}
           onChange={(e) => setSelectedPid(Number(e.target.value))}
-          className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-1.5 text-sm text-gray-100 outline-none transition focus:border-indigo-500"
+          className="rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-gray-100 outline-none transition focus:border-indigo-500"
         >
           {pids.map((pid) => (
             <option key={pid} value={pid}>
@@ -46,7 +46,7 @@ export default function PageTable({ pageTables, pids }: Props) {
       </div>
 
       {entries.length > 0 ? (
-        <div className="overflow-hidden rounded-lg border border-gray-700">
+        <div className="overflow-x-auto rounded-lg border border-gray-700">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-gray-700 bg-gray-800/60 text-xs font-medium uppercase tracking-wider text-gray-400">

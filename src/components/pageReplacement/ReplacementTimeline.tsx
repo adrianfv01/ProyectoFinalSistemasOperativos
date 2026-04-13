@@ -36,7 +36,7 @@ export default function ReplacementTimeline() {
               key={i}
               ref={isCurrent ? activeRef : undefined}
               onClick={() => setCurrentStep(i)}
-              className={`flex h-10 w-10 flex-shrink-0 flex-col items-center justify-center rounded-md text-[10px] font-medium transition ${
+              className={`flex h-11 w-11 flex-shrink-0 flex-col items-center justify-center rounded-md text-[10px] font-medium transition sm:h-10 sm:w-10 ${
                 isCurrent
                   ? 'ring-2 ring-indigo-400'
                   : ''

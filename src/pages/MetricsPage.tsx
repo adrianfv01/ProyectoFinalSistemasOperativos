@@ -105,7 +105,7 @@ export default function MetricsPage() {
   }, [result])
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="space-y-6 sm:space-y-8">
       <motion.h1
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
