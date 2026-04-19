@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import AppShell from './components/layout/AppShell'
@@ -9,37 +10,72 @@ import MetricsPage from './pages/MetricsPage'
 import ComparisonPage from './pages/ComparisonPage'
 import WelcomePage from './pages/WelcomePage'
 import GuideRouter from './guide/GuideRouter'
+import { getRouteIndex } from './components/layout/routesConfig'
+import { useIsMobile } from './utils/useIsMobile'
 
-const pageVariants = {
-  initial: { opacity: 0, y: 12 },
-  in: { opacity: 1, y: 0 },
-  out: { opacity: 0, y: -12 },
-}
+function AnimatedPage({
+  children,
+  direction,
+  mobile,
+}: {
+  children: React.ReactNode
+  direction: number
+  mobile: boolean
+}) {
+  const variants = mobile
+    ? {
+        initial: { opacity: 0, x: direction * 60 },
+        in: { opacity: 1, x: 0 },
+        out: { opacity: 0, x: direction * -60 },
+      }
+    : {
+        initial: { opacity: 0, y: 12 },
+        in: { opacity: 1, y: 0 },
+        out: { opacity: 0, y: -12 },
+      }
 
-function AnimatedPage({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
-      variants={pageVariants}
+      variants={variants}
       initial="initial"
       animate="in"
       exit="out"
-      transition={{ duration: 0.2, ease: 'easeOut' }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
     >
       {children}
     </motion.div>
   )
 }
 
-function ShellRoute({ children }: { children: React.ReactNode }) {
+function ShellRoute({
+  children,
+  direction,
+  mobile,
+}: {
+  children: React.ReactNode
+  direction: number
+  mobile: boolean
+}) {
   return (
     <AppShell>
-      <AnimatedPage>{children}</AnimatedPage>
+      <AnimatedPage direction={direction} mobile={mobile}>
+        {children}
+      </AnimatedPage>
     </AppShell>
   )
 }
 
 export default function App() {
   const location = useLocation()
+  const isMobile = useIsMobile()
+  const previousIndex = useRef<number>(getRouteIndex(location.pathname))
+
+  const currentIndex = getRouteIndex(location.pathname)
+  let direction = 0
+  if (currentIndex >= 0 && previousIndex.current >= 0) {
+    direction = currentIndex >= previousIndex.current ? 1 : -1
+  }
+  if (currentIndex >= 0) previousIndex.current = currentIndex
 
   return (
     <AnimatePresence mode="wait">
@@ -50,12 +86,54 @@ export default function App() {
         <Route path="/guia/:capitulo" element={<GuideRouter />} />
         <Route path="/guia/:capitulo/:paso" element={<GuideRouter />} />
 
-        <Route path="/procesos" element={<ShellRoute><ProcessesPage /></ShellRoute>} />
-        <Route path="/planificacion" element={<ShellRoute><SchedulingPage /></ShellRoute>} />
-        <Route path="/memoria" element={<ShellRoute><MemoryPage /></ShellRoute>} />
-        <Route path="/reemplazo" element={<ShellRoute><ReplacementPage /></ShellRoute>} />
-        <Route path="/metricas" element={<ShellRoute><MetricsPage /></ShellRoute>} />
-        <Route path="/comparacion" element={<ShellRoute><ComparisonPage /></ShellRoute>} />
+        <Route
+          path="/procesos"
+          element={
+            <ShellRoute direction={direction} mobile={isMobile}>
+              <ProcessesPage />
+            </ShellRoute>
+          }
+        />
+        <Route
+          path="/planificacion"
+          element={
+            <ShellRoute direction={direction} mobile={isMobile}>
+              <SchedulingPage />
+            </ShellRoute>
+          }
+        />
+        <Route
+          path="/memoria"
+          element={
+            <ShellRoute direction={direction} mobile={isMobile}>
+              <MemoryPage />
+            </ShellRoute>
+          }
+        />
+        <Route
+          path="/reemplazo"
+          element={
+            <ShellRoute direction={direction} mobile={isMobile}>
+              <ReplacementPage />
+            </ShellRoute>
+          }
+        />
+        <Route
+          path="/metricas"
+          element={
+            <ShellRoute direction={direction} mobile={isMobile}>
+              <MetricsPage />
+            </ShellRoute>
+          }
+        />
+        <Route
+          path="/comparacion"
+          element={
+            <ShellRoute direction={direction} mobile={isMobile}>
+              <ComparisonPage />
+            </ShellRoute>
+          }
+        />
       </Routes>
     </AnimatePresence>
   )
