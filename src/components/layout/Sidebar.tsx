@@ -7,6 +7,7 @@ import {
   RefreshCw,
   BarChart3,
   GitCompareArrows,
+  GraduationCap,
   Sun,
   Moon,
   X,
@@ -14,12 +15,12 @@ import {
 import { useThemeStore } from '../../store/themeStore'
 
 const links = [
-  { to: '/', label: 'Procesos', icon: ListPlus },
-  { to: '/scheduling', label: 'Planificación', icon: CalendarClock },
-  { to: '/memory', label: 'Memoria', icon: HardDrive },
-  { to: '/replacement', label: 'Reemplazo', icon: RefreshCw },
-  { to: '/metrics', label: 'Métricas', icon: BarChart3 },
-  { to: '/comparison', label: 'Comparación', icon: GitCompareArrows },
+  { to: '/procesos', label: 'Procesos', icon: ListPlus },
+  { to: '/planificacion', label: 'Planificación', icon: CalendarClock },
+  { to: '/memoria', label: 'Memoria', icon: HardDrive },
+  { to: '/reemplazo', label: 'Reemplazo', icon: RefreshCw },
+  { to: '/metricas', label: 'Métricas', icon: BarChart3 },
+  { to: '/comparacion', label: 'Comparación', icon: GitCompareArrows },
 ]
 
 interface SidebarProps {
@@ -68,11 +69,28 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-2 py-3">
+          <NavLink
+            to="/guia"
+            className={({ isActive }) =>
+              `mb-3 flex items-center gap-3 rounded-lg border border-indigo-500/40 bg-gradient-to-r from-indigo-600/30 to-fuchsia-600/20 px-3 py-2.5 text-sm font-semibold transition-colors ${
+                isActive
+                  ? 'text-indigo-200 ring-1 ring-indigo-400/60'
+                  : 'text-indigo-200 hover:from-indigo-600/40 hover:to-fuchsia-600/30'
+              }`
+            }
+          >
+            <GraduationCap className="h-4 w-4 shrink-0" />
+            Guía interactiva
+          </NavLink>
+
+          <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-gray-600">
+            Modo libre
+          </p>
+
           {links.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
-              end={to === '/'}
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                   isActive
