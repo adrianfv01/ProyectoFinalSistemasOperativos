@@ -43,7 +43,7 @@ export default function WelcomePage() {
           className="flex items-center gap-2 self-start rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-300"
         >
           <HardDrive className="h-3.5 w-3.5" />
-          Simulador de Sistemas Operativos
+          Simulador de Sistema Operativo
         </motion.div>
 
         <div className="space-y-3">
