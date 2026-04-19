@@ -1,23 +1,19 @@
 import { useState } from 'react'
-import { Trash2, Plus, Upload } from 'lucide-react'
+import { Trash2, Plus } from 'lucide-react'
 import { useProcessStore } from '../store/processStore'
 import ProcessForm from '../components/processes/ProcessForm'
-import FileUpload from '../components/processes/FileUpload'
 import ProcessTable from '../components/processes/ProcessTable'
 import StateDiagram from '../components/processes/StateDiagram'
 import ThreadManager from '../components/processes/ThreadManager'
 import BottomSheet from '../components/ui/BottomSheet'
 import Fab from '../components/ui/Fab'
 import Modal from '../components/ui/Modal'
-import type { MemoryConfig } from '../utils/fileParser'
 
 export default function ProcessesPage() {
   const processes = useProcessStore((s) => s.processes)
   const clearAll = useProcessStore((s) => s.clearAll)
   const [selectedPid, setSelectedPid] = useState<number | null>(null)
-  const [, setMemoryConfig] = useState<MemoryConfig | null>(null)
   const [addOpen, setAddOpen] = useState(false)
-  const [importOpen, setImportOpen] = useState(false)
   const [confirmClear, setConfirmClear] = useState(false)
 
   const effectivePid = processes.find((p) => p.pid === selectedPid)
@@ -46,9 +42,8 @@ export default function ProcessesPage() {
         )}
       </div>
 
-      <div className="hidden gap-4 lg:grid lg:grid-cols-2">
+      <div className="hidden lg:block">
         <ProcessForm />
-        <FileUpload onMemoryConfig={setMemoryConfig} />
       </div>
 
       <ProcessTable selectedPid={effectivePid} onSelectPid={setSelectedPid} />
@@ -66,33 +61,12 @@ export default function ProcessesPage() {
         label="Agregar proceso"
       />
 
-      <button
-        onClick={() => setImportOpen(true)}
-        aria-label="Importar archivo"
-        className="fixed right-24 z-30 flex h-12 w-12 items-center justify-center rounded-full border border-gray-700 bg-gray-900/95 text-gray-200 shadow-lg shadow-black/40 backdrop-blur transition active:scale-95 lg:hidden"
-        style={{ bottom: 'calc(4.5rem + env(safe-area-inset-bottom) + 1.25rem)' }}
-      >
-        <Upload size={20} />
-      </button>
-
       <BottomSheet
         open={addOpen}
         onClose={() => setAddOpen(false)}
         title="Nuevo proceso"
       >
         <ProcessForm variant="plain" onCreated={() => setAddOpen(false)} />
-      </BottomSheet>
-
-      <BottomSheet
-        open={importOpen}
-        onClose={() => setImportOpen(false)}
-        title="Importar archivos"
-      >
-        <FileUpload
-          variant="plain"
-          onMemoryConfig={setMemoryConfig}
-          onLoaded={() => setImportOpen(false)}
-        />
       </BottomSheet>
 
       <Modal
