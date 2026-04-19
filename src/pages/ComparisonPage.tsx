@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BarChart3, AlertCircle, Info } from 'lucide-react'
+import { BarChart3, AlertCircle, Info, Play } from 'lucide-react'
 import { useProcessStore } from '../store/processStore'
 import { useMemoryStore } from '../store/memoryStore'
 import { ALGORITHM_LABELS, type AlgorithmName } from '../store/schedulingStore'
@@ -11,21 +11,42 @@ import ComparisonChart, {
   type SchedulingComparisonEntry,
   type ReplacementComparisonEntry,
 } from '../components/comparison/ComparisonChart'
+import StickyActionBar from '../components/ui/StickyActionBar'
 
 export default function ComparisonPage() {
   const processes = useProcessStore((s) => s.processes)
   const frames = useMemoryStore((s) => s.frames)
 
+  const [selectedScheduling, setSelectedScheduling] = useState<Set<AlgorithmName>>(new Set())
+  const [selectedReplacement, setSelectedReplacement] = useState<Set<ReplacementAlgorithmName>>(new Set())
+  const [quantum, setQuantum] = useState(2)
   const [schedulingResults, setSchedulingResults] = useState<SchedulingComparisonEntry[]>([])
   const [replacementResults, setReplacementResults] = useState<ReplacementComparisonEntry[]>([])
   const [hasRun, setHasRun] = useState(false)
 
-  const handleCompare = (
-    selectedScheduling: AlgorithmName[],
-    selectedReplacement: ReplacementAlgorithmName[],
-    quantum: number,
-  ) => {
-    const schedResults: SchedulingComparisonEntry[] = selectedScheduling.map((algo) => {
+  const toggleScheduling = (key: AlgorithmName) => {
+    setSelectedScheduling((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }
+
+  const toggleReplacement = (key: ReplacementAlgorithmName) => {
+    setSelectedReplacement((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }
+
+  const hasSelection = selectedScheduling.size > 0 || selectedReplacement.size > 0
+  const totalSelected = selectedScheduling.size + selectedReplacement.size
+
+  const handleCompare = () => {
+    const schedResults: SchedulingComparisonEntry[] = Array.from(selectedScheduling).map((algo) => {
       const scheduler = getScheduler(algo)
       const result = scheduler(
         processes.map((p) => ({ ...p })),
@@ -41,7 +62,7 @@ export default function ComparisonPage() {
     })
 
     const refString = generateReferenceString(processes)
-    const replResults: ReplacementComparisonEntry[] = selectedReplacement.map((algo) => {
+    const replResults: ReplacementComparisonEntry[] = Array.from(selectedReplacement).map((algo) => {
       const replacer = getReplacementAlgorithm(algo)
       const steps = replacer(refString, frames)
       const pageFaults = steps.filter((s) => s.isPageFault).length
@@ -68,13 +89,23 @@ export default function ComparisonPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
+    <div className="space-y-4">
+      <div className="hidden items-center gap-3 lg:flex">
         <BarChart3 size={24} className="shrink-0 text-indigo-400" />
-        <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">Comparación de algoritmos</h1>
+        <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">
+          Comparación de algoritmos
+        </h1>
       </div>
 
-      <AlgorithmPicker onCompare={handleCompare} />
+      <AlgorithmPicker
+        selectedScheduling={selectedScheduling}
+        selectedReplacement={selectedReplacement}
+        quantum={quantum}
+        onToggleScheduling={toggleScheduling}
+        onToggleReplacement={toggleReplacement}
+        onQuantumChange={setQuantum}
+        onCompare={handleCompare}
+      />
 
       {!hasRun && (
         <div className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800/40 px-4 py-6 text-gray-400">
@@ -88,6 +119,18 @@ export default function ComparisonPage() {
           schedulingResults={schedulingResults}
           replacementResults={replacementResults}
         />
+      )}
+
+      {hasSelection && (
+        <StickyActionBar>
+          <button
+            onClick={handleCompare}
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition active:scale-[0.98]"
+          >
+            <Play size={18} />
+            Comparar {totalSelected} algoritmo{totalSelected === 1 ? '' : 's'}
+          </button>
+        </StickyActionBar>
       )}
     </div>
   )

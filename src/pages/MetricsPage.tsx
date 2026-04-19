@@ -40,18 +40,29 @@ function SummaryCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-gray-700 bg-gray-800/60 p-5"
+      className="rounded-xl border border-gray-700 bg-gray-800/60 p-3 sm:p-5"
     >
       <div className="flex items-center gap-3">
         <div className={`rounded-lg p-2 ${accent}`}>
           <Icon className="h-5 w-5" />
         </div>
-        <div>
-          <p className="text-sm text-gray-400">{label}</p>
-          <p className="text-xl font-bold text-gray-100">{value}</p>
+        <div className="min-w-0">
+          <p className="truncate text-xs text-gray-400 sm:text-sm">{label}</p>
+          <p className="text-lg font-bold text-gray-100 sm:text-xl">{value}</p>
         </div>
       </div>
     </motion.div>
+  )
+}
+
+function MetricKV({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex flex-col">
+      <span className="text-[11px] uppercase tracking-wider text-gray-500">
+        {label}
+      </span>
+      <span className="font-mono text-sm font-semibold text-gray-100">{value}</span>
+    </div>
   )
 }
 
@@ -109,13 +120,12 @@ export default function MetricsPage() {
       <motion.h1
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
-        className="text-2xl font-bold text-gray-100"
+        className="hidden text-2xl font-bold text-gray-100 lg:block"
       >
         Métricas
       </motion.h1>
 
-      {/* ── Summary cards ── */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <SummaryCard
           icon={Cpu}
           label="Uso de CPU"
@@ -151,7 +161,46 @@ export default function MetricsPage() {
         {!result ? (
           <EmptyState message="Ejecuta un algoritmo de planificación primero" />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-gray-700 bg-gray-800/60">
+          <>
+            <div className="space-y-2 lg:hidden">
+              {result.metrics.map((m, i) => (
+                <div
+                  key={`m-${m.pid}-${m.tid ?? ''}-${i}`}
+                  className="rounded-xl border border-gray-700 bg-gray-800/60 p-3"
+                >
+                  <div className="mb-2 flex items-center gap-2">
+                    <span
+                      className="inline-block h-3 w-3 rounded-full"
+                      style={{ backgroundColor: getProcessColor(m.pid) }}
+                    />
+                    <span className="font-mono text-sm font-semibold text-gray-100">
+                      P{m.pid}
+                      {m.tid !== undefined && (
+                        <span className="ml-1 text-gray-500">·H{m.tid}</span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
+                    <MetricKV label="T. Finalización" value={m.completionTime} />
+                    <MetricKV label="T. Retorno" value={m.turnaroundTime} />
+                    <MetricKV label="T. Espera" value={m.waitingTime} />
+                    <MetricKV label="T. Respuesta" value={m.responseTime} />
+                  </div>
+                </div>
+              ))}
+              <div className="rounded-xl border border-indigo-500/40 bg-indigo-500/10 p-3">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-indigo-300">
+                  Promedio
+                </p>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <MetricKV label="T. Retorno" value={result.averages.avgTurnaroundTime.toFixed(2)} />
+                  <MetricKV label="T. Espera" value={result.averages.avgWaitingTime.toFixed(2)} />
+                  <MetricKV label="T. Respuesta" value={result.averages.avgResponseTime.toFixed(2)} />
+                </div>
+              </div>
+            </div>
+
+          <div className="hidden overflow-x-auto rounded-xl border border-gray-700 bg-gray-800/60 lg:block">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-gray-700 text-gray-400">
@@ -200,6 +249,7 @@ export default function MetricsPage() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </section>
 
@@ -213,7 +263,31 @@ export default function MetricsPage() {
           <EmptyState message="Ejecuta un algoritmo de reemplazo primero" />
         ) : (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            <div
+              className="scroll-snap-x hide-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 sm:hidden"
+              data-no-swipe
+            >
+              {[
+                { icon: HardDrive, label: 'Memoria total', val: `${totalMemory} KB` },
+                { icon: Layers, label: 'Tamaño de página', val: `${pageSize} KB` },
+                { icon: Server, label: 'Marcos totales', val: frames },
+                { icon: AlertTriangle, label: 'Fallos de página', val: pageFaults },
+                { icon: CheckCircle, label: 'Tasa de aciertos', val: `${hitRatio.toFixed(1)}%` },
+              ].map((c) => (
+                <div
+                  key={c.label}
+                  className="min-w-[155px] shrink-0 rounded-xl border border-gray-700 bg-gray-800/60 px-4 py-3"
+                >
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <c.icon className="h-4 w-4" />
+                    <span className="text-xs">{c.label}</span>
+                  </div>
+                  <p className="mt-1 text-lg font-bold text-gray-100">{c.val}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="hidden grid-cols-2 gap-3 sm:grid sm:grid-cols-3 lg:grid-cols-5">
               {[
                 { icon: HardDrive, label: 'Memoria total', val: `${totalMemory} KB` },
                 { icon: Layers, label: 'Tamaño de página', val: `${pageSize} KB` },

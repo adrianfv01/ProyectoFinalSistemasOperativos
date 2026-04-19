@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useProcessStore } from '../../store/processStore'
 import { getProcessColor } from '../../utils/colors'
+import { useIsMobile } from '../../utils/useIsMobile'
 import { ProcessState } from '../../engine/processes/types'
 
 interface Props {
@@ -20,12 +21,20 @@ interface EdgeDef {
   label: string
 }
 
-const NODES: NodeDef[] = [
+const NODES_DESKTOP: NodeDef[] = [
   { id: ProcessState.New, label: 'Nuevo', x: 80, y: 120 },
   { id: ProcessState.Ready, label: 'Listo', x: 230, y: 120 },
   { id: ProcessState.Running, label: 'Ejecución', x: 400, y: 120 },
   { id: ProcessState.Waiting, label: 'Espera', x: 315, y: 250 },
   { id: ProcessState.Terminated, label: 'Terminado', x: 560, y: 120 },
+]
+
+const NODES_MOBILE: NodeDef[] = [
+  { id: ProcessState.New, label: 'Nuevo', x: 160, y: 50 },
+  { id: ProcessState.Ready, label: 'Listo', x: 160, y: 150 },
+  { id: ProcessState.Running, label: 'Ejecución', x: 160, y: 250 },
+  { id: ProcessState.Waiting, label: 'Espera', x: 280, y: 350 },
+  { id: ProcessState.Terminated, label: 'Terminado', x: 160, y: 450 },
 ]
 
 const EDGES: EdgeDef[] = [
@@ -40,11 +49,10 @@ const EDGES: EdgeDef[] = [
 const NODE_RX = 50
 const NODE_RY = 24
 
-function getNode(id: ProcessState) {
-  return NODES.find((n) => n.id === id)!
-}
-
-function computeEdgePath(from: NodeDef, to: NodeDef): { path: string; labelX: number; labelY: number } {
+function computeEdgePath(
+  from: NodeDef,
+  to: NodeDef,
+): { path: string; labelX: number; labelY: number } {
   const dx = to.x - from.x
   const dy = to.y - from.y
   const dist = Math.sqrt(dx * dx + dy * dy)
@@ -65,7 +73,7 @@ function computeEdgePath(from: NodeDef, to: NodeDef): { path: string; labelX: nu
     const my = (y1 + y2) / 2
     const perpX = -uy
     const perpY = ux
-    const curveOffset = from.id === ProcessState.Running ? -30 : 30
+    const curveOffset = from.id === ProcessState.Running ? -60 : 60
     const cx = mx + perpX * curveOffset
     const cy = my + perpY * curveOffset
     return {
@@ -87,11 +95,16 @@ export default function StateDiagram({ selectedPid }: Props) {
   const process = processes.find((p) => p.pid === selectedPid) ?? processes[0]
   const activeState = process?.state
   const color = process ? getProcessColor(process.pid) : '#6366f1'
+  const isMobile = useIsMobile()
+
+  const nodes = isMobile ? NODES_MOBILE : NODES_DESKTOP
+  const viewBox = isMobile ? '0 0 320 510' : '0 0 640 310'
+  const getNode = (id: ProcessState) => nodes.find((n) => n.id === id)!
 
   return (
     <div className="rounded-xl border border-gray-700 bg-gray-900 p-4">
       <h2 className="mb-3 text-lg font-semibold text-gray-100">Diagrama de estados</h2>
-      <svg viewBox="0 0 640 310" className="w-full" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox={viewBox} className="w-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
             <path d="M 0 0 L 8 4 L 0 8 Z" fill="#6b7280" />
@@ -105,9 +118,7 @@ export default function StateDiagram({ selectedPid }: Props) {
           const from = getNode(edge.from)
           const to = getNode(edge.to)
           const { path, labelX, labelY } = computeEdgePath(from, to)
-          const isActive =
-            activeState === edge.from ||
-            activeState === edge.to
+          const isActive = activeState === edge.from || activeState === edge.to
 
           return (
             <g key={`${edge.from}-${edge.to}`}>
@@ -123,7 +134,7 @@ export default function StateDiagram({ selectedPid }: Props) {
                 x={labelX}
                 y={labelY}
                 textAnchor="middle"
-                className="text-[9px]"
+                className={isMobile ? 'text-[11px]' : 'text-[9px]'}
                 fill={isActive ? color : '#9ca3af'}
               >
                 {edge.label}
@@ -132,7 +143,7 @@ export default function StateDiagram({ selectedPid }: Props) {
           )
         })}
 
-        {NODES.map((node) => {
+        {nodes.map((node) => {
           const isActive = activeState === node.id
 
           return (
@@ -165,7 +176,7 @@ export default function StateDiagram({ selectedPid }: Props) {
                 x={node.x}
                 y={node.y + 4}
                 textAnchor="middle"
-                className="text-[11px] font-medium"
+                className="text-[12px] font-medium"
                 fill={isActive ? color : '#d1d5db'}
               >
                 {node.label}
@@ -177,10 +188,13 @@ export default function StateDiagram({ selectedPid }: Props) {
 
       {process && (
         <p className="mt-2 text-center text-xs text-gray-400">
-          Proceso <span className="font-semibold" style={{ color }}>PID {process.pid}</span>
+          Proceso{' '}
+          <span className="font-semibold" style={{ color }}>
+            PID {process.pid}
+          </span>
           {' '}— estado actual:{' '}
           <span className="font-semibold" style={{ color }}>
-            {NODES.find((n) => n.id === activeState)?.label}
+            {nodes.find((n) => n.id === activeState)?.label}
           </span>
         </p>
       )}

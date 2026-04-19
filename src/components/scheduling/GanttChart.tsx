@@ -2,9 +2,11 @@ import { useRef, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useSchedulingStore } from '../../store/schedulingStore'
 import { getProcessColor, getProcessColorWithAlpha } from '../../utils/colors'
+import { useIsMobile } from '../../utils/useIsMobile'
 import type { TimeSlice } from '../../engine/scheduling/types'
 
-const CELL_W = 48
+const CELL_W_DESKTOP = 48
+const CELL_W_MOBILE = 36
 const BAR_H = 36
 
 function sliceLabel(s: TimeSlice) {
@@ -12,11 +14,14 @@ function sliceLabel(s: TimeSlice) {
 }
 
 export default function GanttChart() {
-  const { result, currentStep } = useSchedulingStore()
+  const { result, currentStep, setCurrentStep } = useSchedulingStore()
   const scrollRef = useRef<HTMLDivElement>(null)
+  const isMobile = useIsMobile()
+  const CELL_W = isMobile ? CELL_W_MOBILE : CELL_W_DESKTOP
 
   const timeline = result?.timeline ?? []
   const maxTime = timeline.length > 0 ? timeline[timeline.length - 1].end : 0
+  const maxStep = Math.max(0, timeline.length - 1)
 
   const ticks = useMemo(() => {
     const t: number[] = []
@@ -29,15 +34,24 @@ export default function GanttChart() {
     const target = currentStep < timeline.length ? currentStep : timeline.length - 1
     const x = timeline[target].start * CELL_W
     scrollRef.current.scrollTo({ left: Math.max(0, x - 200), behavior: 'smooth' })
-  }, [currentStep, timeline])
+  }, [currentStep, timeline, CELL_W])
 
   if (timeline.length === 0) return null
 
   return (
     <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
-      <h2 className="mb-3 text-lg font-semibold text-gray-100">Diagrama de Gantt</h2>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-base font-semibold text-gray-100 sm:text-lg">
+          Diagrama de Gantt
+        </h2>
+        <span className="text-xs text-gray-500 lg:hidden">Desliza horizontal</span>
+      </div>
 
-      <div ref={scrollRef} className="overflow-x-auto pb-2">
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto pb-2"
+        data-no-swipe
+      >
         <div style={{ width: maxTime * CELL_W + 40, minWidth: '100%' }} className="relative">
           <div className="flex items-end" style={{ height: BAR_H + 8 }}>
             {timeline.map((slice, i) => {
@@ -86,6 +100,23 @@ export default function GanttChart() {
           </div>
         </div>
       </div>
+
+      {isMobile && maxStep > 0 && (
+        <div className="mt-3 flex items-center gap-3" data-no-swipe>
+          <span className="shrink-0 font-mono text-xs text-gray-400">
+            {currentStep + 1}/{timeline.length}
+          </span>
+          <input
+            type="range"
+            min={0}
+            max={maxStep}
+            value={currentStep}
+            onChange={(e) => setCurrentStep(parseInt(e.target.value, 10))}
+            className="h-2 w-full cursor-pointer accent-indigo-500"
+            aria-label="Avance del diagrama de Gantt"
+          />
+        </div>
+      )}
     </div>
   )
 }

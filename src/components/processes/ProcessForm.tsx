@@ -2,7 +2,12 @@ import { useState, type FormEvent } from 'react'
 import { useProcessStore } from '../../store/processStore'
 import { Plus } from 'lucide-react'
 
-export default function ProcessForm() {
+interface ProcessFormProps {
+  variant?: 'card' | 'plain'
+  onCreated?: () => void
+}
+
+export default function ProcessForm({ variant = 'card', onCreated }: ProcessFormProps = {}) {
   const addProcess = useProcessStore((s) => s.addProcess)
   const [arrival, setArrival] = useState('')
   const [burst, setBurst] = useState('')
@@ -41,20 +46,30 @@ export default function ProcessForm() {
     setBurst('')
     setPriority('')
     setPages('')
+    onCreated?.()
   }
 
   const inputClass =
-    'w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-100 placeholder-gray-500 outline-none transition focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500'
+    'w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-base text-gray-100 placeholder-gray-500 outline-none transition focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:text-sm sm:py-2'
+
+  const wrapperClass =
+    variant === 'card'
+      ? 'rounded-xl border border-gray-700 bg-gray-900 p-5'
+      : ''
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-xl border border-gray-700 bg-gray-900 p-5">
-      <h2 className="mb-4 text-lg font-semibold text-gray-100">Nuevo proceso</h2>
+    <form onSubmit={handleSubmit} className={wrapperClass}>
+      {variant === 'card' && (
+        <h2 className="mb-4 text-lg font-semibold text-gray-100">Nuevo proceso</h2>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         <label className="space-y-1">
           <span className="text-xs font-medium text-gray-400">Tiempo de llegada</span>
           <input
             type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
             min={0}
             step={1}
             value={arrival}
@@ -68,6 +83,8 @@ export default function ProcessForm() {
           <span className="text-xs font-medium text-gray-400">Ráfaga (burst)</span>
           <input
             type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
             min={1}
             step={1}
             value={burst}
@@ -81,6 +98,8 @@ export default function ProcessForm() {
           <span className="text-xs font-medium text-gray-400">Prioridad</span>
           <input
             type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
             min={0}
             step={1}
             value={priority}
@@ -94,6 +113,8 @@ export default function ProcessForm() {
           <span className="text-xs font-medium text-gray-400">Número de páginas</span>
           <input
             type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
             min={0}
             step={1}
             value={pages}
@@ -108,7 +129,7 @@ export default function ProcessForm() {
 
       <button
         type="submit"
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500 active:scale-[0.98]"
+        className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 active:scale-[0.98] sm:h-10 sm:rounded-lg"
       >
         <Plus size={16} />
         Agregar proceso

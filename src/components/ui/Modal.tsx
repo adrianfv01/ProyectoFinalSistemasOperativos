@@ -1,0 +1,78 @@
+import { ReactNode, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+
+interface Props {
+  open: boolean
+  onClose: () => void
+  title?: string
+  description?: string
+  children?: ReactNode
+  actions?: ReactNode
+}
+
+export default function Modal({
+  open,
+  onClose,
+  title,
+  description,
+  children,
+  actions,
+}: Props) {
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose()
+    }
+    if (open) window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div
+            key="backdrop"
+            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={onClose}
+            aria-hidden
+          />
+
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label={title}
+              initial={{ scale: 0.9, opacity: 0, y: 12 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ type: 'spring', damping: 28, stiffness: 380 }}
+              className="w-full max-w-sm rounded-2xl border border-gray-700 bg-gray-900 p-5 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {title && (
+                <h2 className="text-base font-semibold text-gray-100">{title}</h2>
+              )}
+              {description && (
+                <p className="mt-1 text-sm text-gray-400">{description}</p>
+              )}
+              {children && <div className="mt-3">{children}</div>}
+              {actions && (
+                <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                  {actions}
+                </div>
+              )}
+            </motion.div>
+          </div>
+        </>
+      )}
+    </AnimatePresence>,
+    document.body,
+  )
+}

@@ -26,6 +26,7 @@ export default function ReplacementTimeline() {
       <div
         ref={containerRef}
         className="flex gap-1 overflow-x-auto pb-2"
+        data-no-swipe
       >
         {replacementSteps.map((step, i) => {
           const isCurrent = i === currentStep

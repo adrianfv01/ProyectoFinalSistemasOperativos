@@ -5,9 +5,11 @@ import { useProcessStore } from '../../store/processStore'
 
 interface Props {
   onMemoryConfig?: (config: MemoryConfig) => void
+  variant?: 'card' | 'plain'
+  onLoaded?: () => void
 }
 
-export default function FileUpload({ onMemoryConfig }: Props) {
+export default function FileUpload({ onMemoryConfig, variant = 'card', onLoaded }: Props) {
   const setProcesses = useProcessStore((s) => s.setProcesses)
   const [dragOverProcess, setDragOverProcess] = useState(false)
   const [dragOverMemory, setDragOverMemory] = useState(false)
@@ -30,11 +32,12 @@ export default function FileUpload({ onMemoryConfig }: Props) {
         if (processes.length > 0) {
           setProcesses(processes)
           setProcessFileName(file.name)
+          onLoaded?.()
         }
       }
       reader.readAsText(file)
     },
-    [setProcesses],
+    [setProcesses, onLoaded],
   )
 
   const handleMemoryFile = useCallback(
@@ -46,10 +49,11 @@ export default function FileUpload({ onMemoryConfig }: Props) {
         const config = parseMemoryFile(content)
         onMemoryConfig?.(config)
         setMemoryFileName(file.name)
+        onLoaded?.()
       }
       reader.readAsText(file)
     },
-    [onMemoryConfig],
+    [onMemoryConfig, onLoaded],
   )
 
   function onDrop(handler: (f: File) => void, setDrag: (v: boolean) => void) {
@@ -73,9 +77,16 @@ export default function FileUpload({ onMemoryConfig }: Props) {
     e.preventDefault()
   }
 
+  const wrapperClass =
+    variant === 'card'
+      ? 'flex flex-col gap-3 rounded-xl border border-gray-700 bg-gray-900 p-5'
+      : 'flex flex-col gap-3'
+
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-gray-700 bg-gray-900 p-5">
-      <h2 className="text-lg font-semibold text-gray-100">Cargar archivos</h2>
+    <div className={wrapperClass}>
+      {variant === 'card' && (
+        <h2 className="text-lg font-semibold text-gray-100">Cargar archivos</h2>
+      )}
 
       <label
         className={`flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed p-6 transition ${

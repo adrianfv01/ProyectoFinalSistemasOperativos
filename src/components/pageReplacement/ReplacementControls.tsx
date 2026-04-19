@@ -7,7 +7,11 @@ import {
   SkipBack,
 } from 'lucide-react'
 
-export default function ReplacementControls() {
+interface Props {
+  variant?: 'card' | 'bar'
+}
+
+export default function ReplacementControls({ variant = 'card' }: Props) {
   const {
     replacementSteps,
     currentStep,
@@ -44,36 +48,48 @@ export default function ReplacementControls() {
 
   if (total === 0) return null
 
+  const containerClass =
+    variant === 'card'
+      ? 'rounded-xl border border-gray-700 bg-gray-800 p-4'
+      : 'px-3 py-2'
+  const innerClass =
+    variant === 'card'
+      ? 'flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4'
+      : 'flex items-center justify-between gap-3'
+
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-        <div className="flex items-center justify-center gap-2">
+    <div className={containerClass}>
+      <div className={innerClass}>
+        <div className="flex items-center justify-center gap-1">
           <button
             onClick={stepBackward}
             disabled={currentStep === 0}
-            className="rounded-lg border border-gray-600 p-2.5 text-gray-300 transition hover:bg-gray-700 disabled:opacity-40"
+            className="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-600 text-gray-300 transition active:bg-gray-700 disabled:opacity-40 sm:h-11 sm:w-11"
+            aria-label="Paso anterior"
           >
-            <SkipBack size={16} />
+            <SkipBack size={18} />
           </button>
 
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="rounded-lg bg-indigo-600 p-2.5 text-white transition hover:bg-indigo-500"
+            className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-600 text-white transition active:scale-95 sm:h-11 sm:w-11"
+            aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
           >
-            {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+            {isPlaying ? <Pause size={18} /> : <Play size={18} />}
           </button>
 
           <button
             onClick={stepForward}
             disabled={currentStep >= total - 1}
-            className="rounded-lg border border-gray-600 p-2.5 text-gray-300 transition hover:bg-gray-700 disabled:opacity-40"
+            className="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-600 text-gray-300 transition active:bg-gray-700 disabled:opacity-40 sm:h-11 sm:w-11"
+            aria-label="Paso siguiente"
           >
-            <SkipForward size={16} />
+            <SkipForward size={18} />
           </button>
         </div>
 
-        <div className="flex items-center justify-center gap-2">
-          <label className="text-sm text-gray-400">Velocidad</label>
+        <div className="flex items-center gap-2 text-xs text-gray-400 sm:text-sm">
+          <label className="hidden sm:inline">Velocidad</label>
           <input
             type="range"
             min={0.5}
@@ -81,19 +97,16 @@ export default function ReplacementControls() {
             step={0.5}
             value={speed}
             onChange={(e) => setSpeed(parseFloat(e.target.value))}
-            className="h-2 w-28 cursor-pointer accent-indigo-500"
+            className="h-2 w-24 cursor-pointer accent-indigo-500 sm:w-28"
+            aria-label="Velocidad"
           />
-          <span className="w-10 text-sm text-gray-300">{speed}x</span>
+          <span className="w-9 text-gray-300">{speed}x</span>
         </div>
 
-        <div className="flex items-center justify-center gap-3 text-sm sm:ml-auto">
-          <span className="text-red-400">
-            Fallos: {faults}
-          </span>
+        <div className="flex items-center gap-2 text-xs sm:ml-auto sm:text-sm">
+          <span className="text-red-400">Fallos: {faults}</span>
           <span className="text-gray-500">/</span>
-          <span className="text-gray-300">
-            Total: {total}
-          </span>
+          <span className="text-gray-300">Total: {total}</span>
         </div>
       </div>
     </div>

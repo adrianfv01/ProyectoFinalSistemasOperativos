@@ -12,7 +12,65 @@ export default function SchedulingMetrics() {
     <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
       <h2 className="mb-3 text-sm font-semibold text-gray-400">Métricas</h2>
 
-      <div className="overflow-x-auto">
+      <div className="space-y-2 lg:hidden">
+        {metrics.map((m) => (
+          <div
+            key={`${m.pid}-${m.tid ?? ''}`}
+            className="rounded-xl border border-gray-700 bg-gray-900 p-3"
+          >
+            <div className="mb-2 flex items-center gap-2">
+              <span
+                className="inline-block h-3 w-3 rounded-full"
+                style={{ backgroundColor: getProcessColor(m.pid) }}
+              />
+              <span className="font-mono text-sm font-semibold text-gray-100">
+                {m.tid != null ? `P${m.pid}-H${m.tid}` : `P${m.pid}`}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-gray-400">
+              <span>
+                CT: <span className="font-mono text-gray-200">{m.completionTime}</span>
+              </span>
+              <span>
+                TAT: <span className="font-mono text-gray-200">{m.turnaroundTime}</span>
+              </span>
+              <span>
+                WT: <span className="font-mono text-gray-200">{m.waitingTime}</span>
+              </span>
+              <span>
+                RT: <span className="font-mono text-gray-200">{m.responseTime}</span>
+              </span>
+            </div>
+          </div>
+        ))}
+        <div className="rounded-xl border border-indigo-500/40 bg-indigo-500/10 p-3">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-indigo-300">
+            Promedio
+          </p>
+          <div className="grid grid-cols-3 gap-2 text-xs text-gray-300">
+            <span>
+              TAT:{' '}
+              <span className="font-mono font-semibold text-indigo-200">
+                {averages.avgTurnaroundTime.toFixed(2)}
+              </span>
+            </span>
+            <span>
+              WT:{' '}
+              <span className="font-mono font-semibold text-indigo-200">
+                {averages.avgWaitingTime.toFixed(2)}
+              </span>
+            </span>
+            <span>
+              RT:{' '}
+              <span className="font-mono font-semibold text-indigo-200">
+                {averages.avgResponseTime.toFixed(2)}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="hidden overflow-x-auto lg:block">
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-gray-700 text-gray-400">

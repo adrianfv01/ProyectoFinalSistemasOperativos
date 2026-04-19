@@ -21,7 +21,7 @@ export default function MemoryGrid({ frames }: Props) {
         Mapa de memoria
       </h3>
 
-      <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(5.5rem, 1fr))' }}>
+      <div className="memory-grid grid gap-2">
         {frames.map((frame, idx) => {
           const occupied = frame.pid !== null
           const bg = occupied

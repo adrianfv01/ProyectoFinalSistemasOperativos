@@ -43,10 +43,7 @@ export default function ReplacementVisualization() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="grid gap-2"
-          style={{
-            gridTemplateColumns: `repeat(auto-fill, minmax(80px, 1fr))`,
-          }}
+          className="memory-grid grid gap-2"
         >
           {step.frameState.map((frame, i) => {
             const isLoaded = step.loadedIntoFrame === frame.frameNumber
