@@ -24,13 +24,21 @@ export default function BigSlider({
   const dec = () => onChange(Math.max(min, value - step))
   const inc = () => onChange(Math.min(max, value + step))
 
+  const pct = ((value - min) / (max - min)) * 100
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="flex items-baseline justify-between">
-        <span className="text-sm font-medium text-gray-300">{label}</span>
-        <span className="text-2xl font-bold tabular-nums text-indigo-300">
+        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
+          {label}
+        </span>
+        <span className="font-mono text-[26px] font-bold tabular-nums text-[color:var(--text)]">
           {value}
-          {unit && <span className="ml-0.5 text-sm text-gray-400">{unit}</span>}
+          {unit && (
+            <span className="ml-1 text-[13px] font-medium text-[color:var(--text-muted)]">
+              {unit}
+            </span>
+          )}
         </span>
       </div>
 
@@ -39,7 +47,7 @@ export default function BigSlider({
           type="button"
           onClick={dec}
           disabled={value <= min}
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-gray-700 bg-gray-800 text-gray-200 transition active:scale-95 hover:bg-gray-700 disabled:opacity-30"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-2)] text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-3)] hover:text-[color:var(--text)] disabled:cursor-not-allowed disabled:opacity-30"
           aria-label={`Disminuir ${label}`}
         >
           <Minus size={20} />
@@ -52,11 +60,9 @@ export default function BigSlider({
           step={step}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="h-12 flex-1 cursor-pointer appearance-none rounded-full bg-gray-800 accent-indigo-500"
+          className="h-12 flex-1 cursor-pointer appearance-none rounded-full"
           style={{
-            background: `linear-gradient(to right, rgb(99 102 241) 0%, rgb(99 102 241) ${
-              ((value - min) / (max - min)) * 100
-            }%, rgb(31 41 55) ${((value - min) / (max - min)) * 100}%, rgb(31 41 55) 100%)`,
+            background: `linear-gradient(to right, var(--accent) 0%, var(--accent) ${pct}%, var(--surface-2) ${pct}%, var(--surface-2) 100%)`,
           }}
         />
 
@@ -64,14 +70,16 @@ export default function BigSlider({
           type="button"
           onClick={inc}
           disabled={value >= max}
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-gray-700 bg-gray-800 text-gray-200 transition active:scale-95 hover:bg-gray-700 disabled:opacity-30"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-2)] text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-3)] hover:text-[color:var(--text)] disabled:cursor-not-allowed disabled:opacity-30"
           aria-label={`Aumentar ${label}`}
         >
           <Plus size={20} />
         </button>
       </div>
 
-      {hint && <p className="text-xs text-gray-500">{hint}</p>}
+      {hint && (
+        <p className="text-[12px] text-[color:var(--text-faint)]">{hint}</p>
+      )}
     </div>
   )
 }

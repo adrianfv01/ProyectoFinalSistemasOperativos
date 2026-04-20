@@ -12,9 +12,9 @@ interface Props {
 
 const VARIANT_STYLES = {
   primary:
-    'bg-indigo-600 text-white shadow-lg shadow-indigo-900/40 hover:bg-indigo-500',
+    'border border-white/30 bg-gradient-to-b from-white to-[#E7E2FF] text-[#0A0A0A] shadow-[0_12px_36px_-8px_rgba(139,127,224,0.55),0_0_0_1px_rgba(200,188,255,0.35)] hover:brightness-105',
   secondary:
-    'bg-gray-800 text-gray-100 shadow-lg shadow-black/30 hover:bg-gray-700',
+    'border border-[color:var(--border-strong)] bg-[color:var(--surface-2)] text-[color:var(--text)] shadow-[0_8px_28px_-8px_rgba(0,0,0,0.45)] hover:bg-[color:var(--surface-3)]',
 } as const
 
 export default function Fab({

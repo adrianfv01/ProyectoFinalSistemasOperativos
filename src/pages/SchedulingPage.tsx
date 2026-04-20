@@ -11,10 +11,17 @@ export default function SchedulingPage() {
   const result = useSchedulingStore((s) => s.result)
 
   return (
-    <div className="space-y-4">
-      <h1 className="hidden text-xl font-bold text-gray-100 sm:text-2xl lg:block">
-        Planificación de CPU
-      </h1>
+    <div className="space-y-5">
+      <div className="hidden items-end justify-between lg:flex">
+        <div>
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
+            Módulo · Scheduler
+          </span>
+          <h1 className="mt-1 text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
+            Planificación de CPU
+          </h1>
+        </div>
+      </div>
 
       <AlgorithmSelector />
 
@@ -48,9 +55,9 @@ export default function SchedulingPage() {
           </StickyActionBar>
         </>
       ) : (
-        <div className="flex min-h-[200px] items-center justify-center rounded-xl border border-dashed border-gray-700 bg-gray-800/50 p-6">
-          <p className="text-center text-sm text-gray-500">
-            Agrega procesos y ejecuta un algoritmo para ver la simulación
+        <div className="surface-glass flex min-h-[220px] items-center justify-center border-dashed p-6">
+          <p className="text-center text-[13px] text-[color:var(--text-muted)]">
+            Agrega procesos y ejecuta un algoritmo para ver la simulación.
           </p>
         </div>
       )}

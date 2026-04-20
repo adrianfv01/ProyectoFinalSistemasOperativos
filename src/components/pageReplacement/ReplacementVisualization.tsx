@@ -11,27 +11,30 @@ export default function ReplacementVisualization() {
   if (!step) return null
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
-      <div className="mb-3 flex flex-wrap items-center gap-3">
-        <span className="text-sm font-medium text-gray-300">
-          Paso {currentStep + 1} / {replacementSteps.length}
-        </span>
-        <span className="rounded bg-gray-700 px-2 py-1 text-sm text-gray-100">
-          Solicitud: P{step.pid} Página {step.requestedPage}
-        </span>
-        {step.isPageFault && (
-          <span className="rounded bg-red-600/20 px-2 py-1 text-sm font-semibold text-red-400">
-            Fallo de página
+    <div className="surface-card p-4">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <span className="font-mono text-[12px] tabular-nums text-[color:var(--text-muted)]">
+          Paso{' '}
+          <span className="font-semibold text-[color:var(--text)]">
+            {currentStep + 1}
           </span>
-        )}
-        {!step.isPageFault && (
-          <span className="rounded bg-green-600/20 px-2 py-1 text-sm font-semibold text-green-400">
+          <span className="text-[color:var(--text-faint)]"> / {replacementSteps.length}</span>
+        </span>
+        <span className="rounded-md border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 font-mono text-[12px] tabular-nums text-[color:var(--text)]">
+          P{step.pid} → Pg{step.requestedPage}
+        </span>
+        {step.isPageFault ? (
+          <span className="rounded-md border border-rose-300/30 bg-rose-300/10 px-2 py-1 font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-rose-300">
+            Fallo
+          </span>
+        ) : (
+          <span className="rounded-md border border-emerald-300/30 bg-emerald-300/10 px-2 py-1 font-mono text-[12px] font-semibold uppercase tracking-[0.12em] text-emerald-300">
             Acierto
           </span>
         )}
         {step.evictedPage !== undefined && step.evictedPid !== undefined && (
-          <span className="rounded bg-yellow-600/20 px-2 py-1 text-sm font-semibold text-yellow-400">
-            Sale: P{step.evictedPid} Pg{step.evictedPage}
+          <span className="rounded-md border border-amber-300/30 bg-amber-300/10 px-2 py-1 font-mono text-[12px] font-semibold tabular-nums text-amber-300">
+            Sale P{step.evictedPid} Pg{step.evictedPage}
           </span>
         )}
       </div>
@@ -58,25 +61,25 @@ export default function ReplacementVisualization() {
                 initial={isLoaded ? { scale: 0.85 } : undefined}
                 animate={isLoaded ? { scale: 1 } : undefined}
                 transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                className={`relative flex flex-col items-center justify-center rounded-lg border p-2 text-xs ${
+                className={`relative flex flex-col items-center justify-center rounded-lg border p-2 text-xs transition ${
                   isLoaded
-                    ? 'border-green-400 ring-2 ring-green-400/50'
-                    : 'border-gray-600'
+                    ? 'border-emerald-300/60 ring-2 ring-emerald-300/30'
+                    : 'border-[color:var(--border-strong)]'
                 }`}
                 style={{
                   backgroundColor: isEmpty
-                    ? 'rgb(31 41 55)'
+                    ? 'var(--surface-2)'
                     : `${bgColor}22`,
                 }}
               >
-                <span className="text-[10px] text-gray-500">
+                <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[color:var(--text-faint)]">
                   M{frame.frameNumber}
                 </span>
                 {isEmpty ? (
-                  <span className="text-gray-600">—</span>
+                  <span className="font-mono text-[12px] text-[color:var(--text-faint)]">—</span>
                 ) : (
                   <span
-                    className="font-semibold"
+                    className="font-mono text-[12px] font-semibold tabular-nums"
                     style={{ color: bgColor }}
                   >
                     P{frame.pid} Pg{frame.pageNumber}
@@ -84,10 +87,10 @@ export default function ReplacementVisualization() {
                 )}
                 {step.referenceBits && step.referenceBits[i] !== undefined && (
                   <span
-                    className={`mt-0.5 text-[10px] ${
+                    className={`mt-0.5 font-mono text-[10px] tabular-nums ${
                       step.referenceBits[i]
-                        ? 'text-green-400'
-                        : 'text-gray-500'
+                        ? 'text-emerald-300'
+                        : 'text-[color:var(--text-faint)]'
                     }`}
                   >
                     R={step.referenceBits[i] ? '1' : '0'}

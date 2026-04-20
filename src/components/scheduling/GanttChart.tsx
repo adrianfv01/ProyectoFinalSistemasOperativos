@@ -39,12 +39,14 @@ export default function GanttChart() {
   if (timeline.length === 0) return null
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
+    <div className="surface-card p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="text-base font-semibold text-gray-100 sm:text-lg">
+        <h2 className="text-[15px] font-semibold tracking-tight text-[color:var(--text)] sm:text-[16px]">
           Diagrama de Gantt
         </h2>
-        <span className="text-xs text-gray-500 lg:hidden">Desliza horizontal</span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[color:var(--text-faint)] lg:hidden">
+          Desliza →
+        </span>
       </div>
 
       <div
@@ -77,8 +79,8 @@ export default function GanttChart() {
                       : getProcessColorWithAlpha(slice.pid, 0.2),
                     transformOrigin: 'left',
                   }}
-                  className={`absolute top-1 flex items-center justify-center rounded text-xs font-bold text-white ${
-                    isCurrent ? 'ring-2 ring-white ring-offset-1 ring-offset-gray-800' : ''
+                  className={`absolute top-1 flex items-center justify-center rounded-md font-mono text-[11px] font-bold tabular-nums text-white shadow-[0_2px_6px_rgba(0,0,0,0.25)] ${
+                    isCurrent ? 'ring-2 ring-white/90 ring-offset-2 ring-offset-[color:var(--surface)]' : ''
                   }`}
                 >
                   {width >= 32 && sliceLabel(slice)}
@@ -87,12 +89,12 @@ export default function GanttChart() {
             })}
           </div>
 
-          <div className="mt-2 flex border-t border-gray-600">
+          <div className="mt-2 flex border-t border-[color:var(--border)]">
             {ticks.map((t) => (
               <div
                 key={t}
                 style={{ width: CELL_W }}
-                className="flex-shrink-0 pt-1 text-center text-xs text-gray-400"
+                className="flex-shrink-0 pt-1 text-center font-mono text-[11px] tabular-nums text-[color:var(--text-muted)]"
               >
                 {t}
               </div>
@@ -103,7 +105,7 @@ export default function GanttChart() {
 
       {isMobile && maxStep > 0 && (
         <div className="mt-3 flex items-center gap-3" data-no-swipe>
-          <span className="shrink-0 font-mono text-xs text-gray-400">
+          <span className="shrink-0 font-mono text-[11px] tabular-nums text-[color:var(--text-muted)]">
             {currentStep + 1}/{timeline.length}
           </span>
           <input
@@ -112,7 +114,7 @@ export default function GanttChart() {
             max={maxStep}
             value={currentStep}
             onChange={(e) => setCurrentStep(parseInt(e.target.value, 10))}
-            className="h-2 w-full cursor-pointer accent-indigo-500"
+            className="h-2 w-full cursor-pointer"
             aria-label="Avance del diagrama de Gantt"
           />
         </div>

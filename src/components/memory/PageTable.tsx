@@ -20,15 +20,15 @@ export default function PageTable({ pageTables, pids }: Props) {
 
   if (pids.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-700 bg-gray-900 p-6 text-center text-sm text-gray-500">
+      <div className="surface-glass rounded-2xl border-dashed p-6 text-center text-[13px] text-[color:var(--text-muted)]">
         No hay tablas de páginas disponibles.
       </div>
     )
   }
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-900 p-5">
-      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-300">
+    <div className="surface-card p-5">
+      <h3 className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
         Tabla de páginas
       </h3>
 
@@ -43,10 +43,10 @@ export default function PageTable({ pageTables, pids }: Props) {
             <button
               key={pid}
               onClick={() => setSelectedPid(pid)}
-              className={`flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-medium transition ${
+              className={`flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 font-mono text-[12px] font-medium tabular-nums transition ${
                 isActive
-                  ? 'text-white'
-                  : 'border-gray-700 bg-gray-800 text-gray-300'
+                  ? 'text-white shadow-[0_2px_8px_rgba(0,0,0,0.25)]'
+                  : 'border-[color:var(--border)] bg-[color:var(--surface-2)] text-[color:var(--text-muted)] hover:text-[color:var(--text)]'
               }`}
               style={
                 isActive
@@ -55,7 +55,7 @@ export default function PageTable({ pageTables, pids }: Props) {
               }
             >
               <span
-                className={`inline-block h-2.5 w-2.5 rounded-full ${
+                className={`inline-block h-2 w-2 rounded-full ${
                   isActive ? 'bg-white/80' : ''
                 }`}
                 style={isActive ? undefined : { backgroundColor: color }}
@@ -74,31 +74,29 @@ export default function PageTable({ pageTables, pids }: Props) {
               return (
                 <div
                   key={entry.pageNumber}
-                  className={`flex items-center gap-3 rounded-xl border p-3 ${
+                  className={`flex items-center gap-3 rounded-xl border p-3 transition ${
                     entry.loaded
-                      ? 'border-gray-700 bg-gray-800/60'
-                      : 'border-gray-800 bg-gray-900/60'
+                      ? 'border-[color:var(--border)] bg-[color:var(--surface-2)]'
+                      : 'border-[color:var(--border)] bg-[color:var(--surface)]'
                   }`}
                 >
-                  <div className="flex h-10 w-12 shrink-0 items-center justify-center rounded-lg bg-gray-800 font-mono text-sm font-semibold text-gray-200">
+                  <div className="flex h-10 w-12 shrink-0 items-center justify-center rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)] font-mono text-[13px] font-semibold tabular-nums text-[color:var(--text)]">
                     Pg{entry.pageNumber}
                   </div>
-                  <ArrowRight size={16} className="shrink-0 text-gray-500" />
-                  <div className="flex h-10 min-w-[3rem] shrink-0 items-center justify-center rounded-lg bg-gray-800 px-3 font-mono text-sm font-semibold text-gray-200">
+                  <ArrowRight size={16} className="shrink-0 text-[color:var(--text-faint)]" />
+                  <div className="flex h-10 min-w-[3rem] shrink-0 items-center justify-center rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 font-mono text-[13px] font-semibold tabular-nums text-[color:var(--text)]">
                     {entry.frameNumber !== null ? `M${entry.frameNumber}` : '—'}
                   </div>
                   <div className="ml-auto">
                     {entry.loaded ? (
                       <span
-                        className="inline-block rounded-full px-2.5 py-1 text-xs font-semibold text-white"
+                        className="inline-block rounded-full px-2.5 py-1 font-mono text-[11px] font-semibold tabular-nums text-white shadow-[0_2px_6px_rgba(0,0,0,0.2)]"
                         style={{ backgroundColor: color }}
                       >
                         Cargada
                       </span>
                     ) : (
-                      <span className="inline-block rounded-full bg-gray-700 px-2.5 py-1 text-xs font-semibold text-gray-400">
-                        Sin cargar
-                      </span>
+                      <span className="chip uppercase">Sin cargar</span>
                     )}
                   </div>
                 </div>
@@ -106,10 +104,10 @@ export default function PageTable({ pageTables, pids }: Props) {
             })}
           </div>
 
-          <div className="hidden overflow-x-auto rounded-lg border border-gray-700 lg:block">
-            <table className="w-full text-left text-sm">
+          <div className="hidden overflow-hidden rounded-xl border border-[color:var(--border)] lg:block">
+            <table className="w-full text-left text-[13px]">
               <thead>
-                <tr className="border-b border-gray-700 bg-gray-800/60 text-xs font-medium uppercase tracking-wider text-gray-400">
+                <tr className="border-b border-[color:var(--border)] bg-[color:var(--surface-2)] font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[color:var(--text-muted)]">
                   <th className="px-4 py-2.5">Página</th>
                   <th className="px-4 py-2.5">Marco</th>
                   <th className="px-4 py-2.5">Cargada</th>
@@ -121,26 +119,24 @@ export default function PageTable({ pageTables, pids }: Props) {
                   return (
                     <tr
                       key={entry.pageNumber}
-                      className={`border-b border-gray-800 transition-colors ${
-                        entry.loaded ? 'bg-gray-800/30' : ''
+                      className={`border-b border-[color:var(--border)] transition-colors ${
+                        entry.loaded ? 'bg-[color:var(--surface-2)]/50' : ''
                       }`}
                     >
-                      <td className="px-4 py-2 text-gray-300">{entry.pageNumber}</td>
-                      <td className="px-4 py-2 text-gray-300">
+                      <td className="px-4 py-2 font-mono tabular-nums text-[color:var(--text)]">{entry.pageNumber}</td>
+                      <td className="px-4 py-2 font-mono tabular-nums text-[color:var(--text-muted)]">
                         {entry.frameNumber !== null ? entry.frameNumber : '—'}
                       </td>
                       <td className="px-4 py-2">
                         {entry.loaded ? (
                           <span
-                            className="inline-block rounded-full px-2 py-0.5 text-xs font-semibold text-white"
+                            className="inline-block rounded-full px-2 py-0.5 font-mono text-[11px] font-semibold tabular-nums text-white"
                             style={{ backgroundColor: color }}
                           >
                             Sí
                           </span>
                         ) : (
-                          <span className="inline-block rounded-full bg-gray-700 px-2 py-0.5 text-xs font-semibold text-gray-400">
-                            No
-                          </span>
+                          <span className="chip">No</span>
                         )}
                       </td>
                     </tr>
@@ -151,7 +147,7 @@ export default function PageTable({ pageTables, pids }: Props) {
           </div>
         </>
       ) : (
-        <p className="text-sm text-gray-500">Selecciona un proceso para ver su tabla.</p>
+        <p className="text-[13px] text-[color:var(--text-muted)]">Selecciona un proceso para ver su tabla.</p>
       )}
     </div>
   )

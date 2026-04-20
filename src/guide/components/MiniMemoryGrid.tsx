@@ -16,8 +16,8 @@ export default function MiniMemoryGrid({
   const cols = frames.length <= 4 ? frames.length : 4
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-900/70 p-3">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+    <div className="surface-card p-3">
+      <p className="mb-2 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
         Marcos de memoria
       </p>
       <div
@@ -36,15 +36,15 @@ export default function MiniMemoryGrid({
               animate={{
                 scale: isHighlight ? 1.05 : 1,
                 boxShadow: isHighlight
-                  ? '0 0 0 3px rgb(99 102 241)'
+                  ? '0 0 0 3px var(--accent)'
                   : isEvicted
-                  ? '0 0 0 3px rgb(244 63 94)'
-                  : '0 0 0 0 transparent',
+                    ? '0 0 0 3px rgb(244 63 94)'
+                    : '0 0 0 0 transparent',
               }}
               transition={{ type: 'spring', stiffness: 240, damping: 18 }}
-              className="relative aspect-square rounded-lg border border-gray-700 bg-gray-800/60"
+              className="relative aspect-square rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)]"
             >
-              <div className="absolute left-1 top-0.5 text-[9px] text-gray-500">
+              <div className="absolute left-1 top-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-[color:var(--text-faint)]">
                 F{f.frameNumber}
               </div>
               {occupied && (
@@ -54,7 +54,7 @@ export default function MiniMemoryGrid({
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.5, opacity: 0 }}
                   transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-                  className="absolute inset-1.5 flex flex-col items-center justify-center rounded-md text-[11px] font-bold text-white"
+                  className="absolute inset-1.5 flex flex-col items-center justify-center rounded-md font-mono text-[11px] font-bold tabular-nums text-white shadow-[0_2px_6px_rgba(0,0,0,0.25)]"
                   style={{ backgroundColor: getProcessColor(f.pid as number) }}
                 >
                   <span>P{f.pid}</span>

@@ -25,14 +25,16 @@ export default function Stepper({
   return (
     <div className={className}>
       {label && (
-        <label className="mb-1 block text-sm text-gray-400">{label}</label>
+        <label className="mb-1.5 block text-[12px] font-medium text-[color:var(--text-muted)]">
+          {label}
+        </label>
       )}
-      <div className="flex items-stretch overflow-hidden rounded-lg border border-gray-600 bg-gray-900">
+      <div className="flex items-stretch overflow-hidden rounded-xl border border-[color:var(--border)] bg-[color:var(--surface)] transition focus-within:border-[color:var(--accent)]/50 focus-within:shadow-[0_0_0_3px_var(--accent-soft)]">
         <button
           type="button"
           onClick={decrement}
           disabled={value <= min}
-          className="flex min-h-11 w-12 items-center justify-center text-gray-300 transition active:bg-gray-800 disabled:opacity-30"
+          className="flex min-h-11 w-11 items-center justify-center text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)] active:bg-[color:var(--surface-3)] disabled:opacity-30"
           aria-label="Disminuir"
         >
           <Minus size={16} />
@@ -49,13 +51,13 @@ export default function Stepper({
             const v = parseInt(e.target.value, 10)
             if (!isNaN(v)) onChange(Math.min(max, Math.max(min, v)))
           }}
-          className="w-full min-w-0 border-x border-gray-700 bg-transparent text-center text-base font-semibold text-gray-100 outline-none"
+          className="w-full min-w-0 border-x border-[color:var(--border)] bg-transparent text-center font-mono text-[15px] font-semibold tabular-nums text-[color:var(--text)] outline-none"
         />
         <button
           type="button"
           onClick={increment}
           disabled={value >= max}
-          className="flex min-h-11 w-12 items-center justify-center text-gray-300 transition active:bg-gray-800 disabled:opacity-30"
+          className="flex min-h-11 w-11 items-center justify-center text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)] active:bg-[color:var(--surface-3)] disabled:opacity-30"
           aria-label="Aumentar"
         >
           <Plus size={16} />

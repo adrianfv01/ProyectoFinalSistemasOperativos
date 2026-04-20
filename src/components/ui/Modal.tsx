@@ -35,11 +35,11 @@ export default function Modal({
         <>
           <motion.div
             key="backdrop"
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.18 }}
             onClick={onClose}
             aria-hidden
           />
@@ -49,18 +49,22 @@ export default function Modal({
               role="dialog"
               aria-modal="true"
               aria-label={title}
-              initial={{ scale: 0.9, opacity: 0, y: 12 }}
+              initial={{ scale: 0.94, opacity: 0, y: 12 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0 }}
+              exit={{ scale: 0.96, opacity: 0 }}
               transition={{ type: 'spring', damping: 28, stiffness: 380 }}
-              className="w-full max-w-sm rounded-2xl border border-gray-700 bg-gray-900 p-5 shadow-2xl"
+              className="surface-card w-full max-w-sm p-5 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
               onClick={(e) => e.stopPropagation()}
             >
               {title && (
-                <h2 className="text-base font-semibold text-gray-100">{title}</h2>
+                <h2 className="text-[15px] font-semibold tracking-tight text-[color:var(--text)]">
+                  {title}
+                </h2>
               )}
               {description && (
-                <p className="mt-1 text-sm text-gray-400">{description}</p>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-[color:var(--text-muted)]">
+                  {description}
+                </p>
               )}
               {children && <div className="mt-3">{children}</div>}
               {actions && (

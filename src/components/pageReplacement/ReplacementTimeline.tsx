@@ -19,8 +19,8 @@ export default function ReplacementTimeline() {
   if (replacementSteps.length === 0) return null
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
-      <h3 className="mb-2 text-sm font-medium text-gray-400">
+    <div className="surface-card p-4">
+      <h3 className="mb-2 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
         Línea de tiempo
       </h3>
       <div
@@ -37,18 +37,18 @@ export default function ReplacementTimeline() {
               key={i}
               ref={isCurrent ? activeRef : undefined}
               onClick={() => setCurrentStep(i)}
-              className={`flex h-11 w-11 flex-shrink-0 flex-col items-center justify-center rounded-md text-[10px] font-medium transition sm:h-10 sm:w-10 ${
+              className={`flex h-11 w-11 flex-shrink-0 flex-col items-center justify-center rounded-md font-mono text-[10px] font-medium tabular-nums transition sm:h-10 sm:w-10 ${
                 isCurrent
-                  ? 'ring-2 ring-indigo-400'
+                  ? 'ring-2 ring-[color:var(--accent)] ring-offset-1 ring-offset-[color:var(--surface)]'
                   : ''
               } ${
                 isFault
-                  ? 'bg-red-600/30 text-red-300'
-                  : 'bg-green-600/30 text-green-300'
+                  ? 'border border-rose-300/30 bg-rose-300/10 text-rose-300'
+                  : 'border border-emerald-300/30 bg-emerald-300/10 text-emerald-300'
               }`}
             >
               <span>{i + 1}</span>
-              <span className="text-[8px]">
+              <span className="text-[8px] uppercase tracking-[0.12em]">
                 {isFault ? 'F' : 'OK'}
               </span>
             </button>

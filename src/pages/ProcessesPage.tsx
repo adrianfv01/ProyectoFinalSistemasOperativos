@@ -22,19 +22,29 @@ export default function ProcessesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-baseline gap-2">
-          <h1 className="hidden text-xl font-bold text-gray-100 sm:block sm:text-2xl lg:block">
-            Captura de Procesos
-          </h1>
-          <span className="rounded-full bg-indigo-500/15 px-2.5 py-0.5 text-xs font-semibold text-indigo-300">
-            {processes.length} {processes.length === 1 ? 'proceso' : 'procesos'}
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="hidden lg:block">
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
+            Módulo · Process Manager
           </span>
+          <div className="mt-1 flex items-baseline gap-3">
+            <h1 className="text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
+              Captura de Procesos
+            </h1>
+            <span className="chip chip-accent">
+              {processes.length} {processes.length === 1 ? 'proceso' : 'procesos'}
+            </span>
+          </div>
         </div>
+
+        <span className="chip chip-accent lg:hidden">
+          {processes.length} {processes.length === 1 ? 'proceso' : 'procesos'}
+        </span>
+
         {processes.length > 0 && (
           <button
             onClick={() => setConfirmClear(true)}
-            className="flex h-10 items-center gap-1.5 rounded-lg border border-red-500/30 px-3 text-xs font-medium text-red-400 transition hover:bg-red-500/10"
+            className="flex h-10 items-center gap-1.5 rounded-xl border border-rose-300/30 bg-rose-300/5 px-3 text-[12px] font-medium text-rose-300 transition hover:bg-rose-300/10"
           >
             <Trash2 size={14} />
             Limpiar todo
@@ -76,10 +86,7 @@ export default function ProcessesPage() {
         description="Se eliminarán todos los procesos y sus hilos. Esta acción no se puede deshacer."
         actions={
           <>
-            <button
-              onClick={() => setConfirmClear(false)}
-              className="h-11 rounded-xl border border-gray-700 px-4 text-sm font-medium text-gray-300 transition active:bg-gray-800"
-            >
+            <button onClick={() => setConfirmClear(false)} className="btn-ghost h-11">
               Cancelar
             </button>
             <button
@@ -87,7 +94,7 @@ export default function ProcessesPage() {
                 clearAll()
                 setConfirmClear(false)
               }}
-              className="h-11 rounded-xl bg-red-600 px-4 text-sm font-semibold text-white transition active:scale-[0.98]"
+              className="btn-danger h-11"
             >
               Limpiar todo
             </button>

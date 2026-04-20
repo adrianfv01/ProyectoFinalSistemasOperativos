@@ -61,16 +61,16 @@ export default function MiniGantt({
   }
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-900/70 p-3">
+    <div className="surface-card p-3">
       <div className="mb-2 flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
           Línea de tiempo de la CPU
         </p>
         <div className="flex gap-1.5">
           <button
             type="button"
             onClick={() => setPlaying((p) => !p)}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-white transition active:scale-95"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-white to-[#E7E2FF] text-[#0A0A0A] shadow-[0_4px_12px_rgba(199,189,255,0.35)] transition active:scale-95"
             aria-label={playing ? 'Pausar' : 'Reproducir'}
           >
             {playing ? <Pause size={14} /> : <Play size={14} />}
@@ -78,7 +78,7 @@ export default function MiniGantt({
           <button
             type="button"
             onClick={reset}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-700 text-gray-300 transition active:scale-95"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--border)] bg-[color:var(--surface-2)] text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-3)] hover:text-[color:var(--text)]"
             aria-label="Reiniciar"
           >
             <RotateCcw size={14} />
@@ -114,7 +114,7 @@ export default function MiniGantt({
                       ? getProcessColor(slice.pid)
                       : getProcessColorWithAlpha(slice.pid, 0.25),
                   }}
-                  className="absolute top-1 flex items-center justify-center overflow-hidden rounded-md text-[11px] font-bold text-white"
+                  className="absolute top-1 flex items-center justify-center overflow-hidden rounded-md font-mono text-[11px] font-bold tabular-nums text-white shadow-[0_2px_6px_rgba(0,0,0,0.25)]"
                 >
                   {fullW >= 28 && `P${slice.pid}`}
                 </motion.div>
@@ -122,13 +122,15 @@ export default function MiniGantt({
             })}
           </div>
 
-          <div className="mt-1 flex border-t border-gray-700">
+          <div className="mt-1 flex border-t border-[color:var(--border)]">
             {ticks.map((t) => (
               <div
                 key={t}
                 style={{ width: CELL }}
-                className={`flex-shrink-0 pt-1 text-center text-[10px] tabular-nums ${
-                  t === tick ? 'font-bold text-indigo-300' : 'text-gray-500'
+                className={`flex-shrink-0 pt-1 text-center font-mono text-[10px] tabular-nums ${
+                  t === tick
+                    ? 'font-bold text-[color:var(--accent)]'
+                    : 'text-[color:var(--text-faint)]'
                 }`}
               >
                 {t}

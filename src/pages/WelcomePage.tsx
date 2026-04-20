@@ -9,8 +9,10 @@ import {
   ArrowRight,
   PlayCircle,
   Settings2,
+  Sparkles,
 } from 'lucide-react'
 import { useTutorialStore } from '../store/tutorialStore'
+import ThemeToggle from '../components/ui/ThemeToggle'
 
 const HIGHLIGHTS = [
   {
@@ -35,31 +37,50 @@ export default function WelcomePage() {
   const hasProgress = completedChapters.length > 0
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-gradient-to-br from-gray-950 via-indigo-950/40 to-gray-950 text-gray-100">
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-5 pt-10 pb-8">
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 self-start rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-300"
-        >
-          <HardDrive className="h-3.5 w-3.5" />
-          Simulador de Sistema Operativo
-        </motion.div>
+    <div className="relative flex min-h-[100dvh] flex-col overflow-hidden text-[color:var(--text)]">
+      {/* aurora del hero */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-0 h-[480px] w-[720px] -translate-x-1/2 rounded-full bg-[color:var(--accent-soft)] blur-[120px]" />
+        <div className="absolute -bottom-32 right-[-10%] h-[420px] w-[480px] rounded-full bg-[color:var(--accent-soft)] opacity-60 blur-[120px]" />
+      </div>
 
-        <div className="space-y-3">
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-7 px-5 pt-12 pb-8 sm:max-w-lg">
+        <div className="flex items-center justify-between gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="chip"
+          >
+            <HardDrive className="h-3 w-3 text-[color:var(--accent)]" />
+            <span className="text-[color:var(--text-muted)]">
+              Simulador de Sistema Operativo
+            </span>
+            <span className="ml-1 inline-flex h-1.5 w-1.5 rounded-full bg-[color:var(--accent)] shadow-[0_0_10px_var(--accent)]" />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <ThemeToggle />
+          </motion.div>
+        </div>
+
+        <div className="space-y-4">
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="text-balance text-4xl font-bold leading-tight text-white sm:text-5xl"
+            className="text-balance text-[40px] font-semibold leading-[1.05] tracking-tight sm:text-[52px]"
           >
-            Aprende cómo funciona tu compu, paso a paso.
+            <span className="gradient-text">
+              Aprende cómo funciona tu compu, paso a paso.
+            </span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-pretty text-base leading-relaxed text-gray-300"
+            className="text-pretty text-[15px] leading-relaxed text-[color:var(--text-muted)]"
           >
             Una guía interactiva con analogías sencillas, animaciones y mini
             simulaciones. No necesitas saber nada sobre sistemas operativos para
@@ -71,61 +92,70 @@ export default function WelcomePage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="grid gap-2.5"
+          className="grid gap-2"
         >
-          {HIGHLIGHTS.map((h) => (
-            <div
+          {HIGHLIGHTS.map((h, i) => (
+            <motion.div
               key={h.title}
-              className="flex items-start gap-3 rounded-xl border border-gray-800 bg-gray-900/60 p-3"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.18 + i * 0.05 }}
+              className="surface-glass group flex items-start gap-3 p-3.5 transition hover:border-[color:var(--accent)]/30"
             >
-              <div className="rounded-lg bg-indigo-500/15 p-2 text-indigo-300">
-                <h.icon className="h-5 w-5" />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[color:var(--border-strong)] bg-[color:var(--surface-2)] text-[color:var(--accent)] transition group-hover:border-[color:var(--accent)]/40">
+                <h.icon className="h-[18px] w-[18px]" />
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-gray-100">{h.title}</p>
-                <p className="text-xs text-gray-400">{h.body}</p>
+              <div className="flex-1 pt-0.5">
+                <p className="text-[13.5px] font-semibold tracking-tight text-[color:var(--text)]">
+                  {h.title}
+                </p>
+                <p className="mt-0.5 text-[12.5px] text-[color:var(--text-muted)]">
+                  {h.body}
+                </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.25 }}
           className="mt-auto space-y-2.5"
         >
           <Link
             to="/guia"
-            className="flex h-14 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 px-5 text-base font-semibold text-white shadow-xl shadow-indigo-900/40 transition active:scale-[0.98] hover:brightness-110"
+            className="btn-primary group h-14 w-full text-[15px]"
           >
             {hasProgress ? (
-              <>
-                <PlayCircle className="h-5 w-5" />
-                Continuar la guía
-              </>
+              <PlayCircle className="h-5 w-5" />
             ) : (
-              <>
-                <GraduationCap className="h-5 w-5" />
-                Empezar la guía
-              </>
+              <Sparkles className="h-4 w-4" />
             )}
-            <ArrowRight className="h-5 w-5" />
+            {hasProgress ? 'Continuar la guía' : 'Empezar la guía'}
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
 
           <Link
             to="/procesos"
-            className="flex h-12 items-center justify-center gap-2 rounded-2xl border border-gray-700 bg-gray-900/70 px-5 text-sm font-medium text-gray-200 transition active:scale-[0.98] hover:bg-gray-800"
+            className="btn-ghost h-12 w-full text-[13px]"
           >
             <Settings2 className="h-4 w-4" />
             Ir directo al modo libre
           </Link>
 
-          <p className="px-2 text-center text-[11px] text-gray-500">
+          <p className="px-2 text-center text-[11px] text-[color:var(--text-faint)]">
             Hecho para celular. También funciona en computadora.
           </p>
         </motion.div>
       </main>
+
+      <div className="pointer-events-none mb-6 flex items-center justify-center gap-2 text-[10px] text-[color:var(--text-faint)]">
+        <GraduationCap className="h-3 w-3" />
+        <span className="font-mono uppercase tracking-[0.18em]">
+          Proyecto final · Sistemas Operativos
+        </span>
+      </div>
     </div>
   )
 }

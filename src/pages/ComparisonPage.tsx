@@ -80,21 +80,30 @@ export default function ComparisonPage() {
 
   if (processes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-32 text-gray-400">
-        <AlertCircle size={40} className="text-yellow-500/70" />
-        <p className="text-lg font-medium">Sin procesos</p>
-        <p className="text-sm">Primero agrega procesos en la pantalla de Captura.</p>
+      <div className="flex flex-col items-center justify-center gap-3 py-32 text-[color:var(--text-muted)]">
+        <AlertCircle size={36} className="text-amber-300/80" />
+        <p className="text-[16px] font-semibold text-[color:var(--text)]">Sin procesos</p>
+        <p className="text-[13px]">Primero agrega procesos en la pantalla de Captura.</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-4">
-      <div className="hidden items-center gap-3 lg:flex">
-        <BarChart3 size={24} className="shrink-0 text-indigo-400" />
-        <h1 className="text-xl font-bold text-gray-100 sm:text-2xl">
-          Comparación de algoritmos
-        </h1>
+    <div className="space-y-5">
+      <div className="hidden items-end justify-between lg:flex">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--border-strong)] bg-[color:var(--surface-2)]">
+            <BarChart3 size={18} className="text-[color:var(--accent)]" />
+          </div>
+          <div>
+            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
+              Módulo · Comparison
+            </span>
+            <h1 className="text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
+              Comparación de algoritmos
+            </h1>
+          </div>
+        </div>
       </div>
 
       <AlgorithmPicker
@@ -108,9 +117,11 @@ export default function ComparisonPage() {
       />
 
       {!hasRun && (
-        <div className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800/40 px-4 py-6 text-gray-400">
-          <Info size={18} />
-          <span className="text-sm">Selecciona algoritmos y presiona Comparar.</span>
+        <div className="surface-glass flex items-center gap-2 px-4 py-6 text-[color:var(--text-muted)]">
+          <Info size={16} className="text-[color:var(--accent)]" />
+          <span className="text-[13px]">
+            Selecciona algoritmos y presiona Comparar.
+          </span>
         </div>
       )}
 
@@ -123,10 +134,7 @@ export default function ComparisonPage() {
 
       {hasSelection && (
         <StickyActionBar>
-          <button
-            onClick={handleCompare}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition active:scale-[0.98]"
-          >
+          <button onClick={handleCompare} className="btn-primary h-12 w-full">
             <Play size={18} />
             Comparar {totalSelected} algoritmo{totalSelected === 1 ? '' : 's'}
           </button>

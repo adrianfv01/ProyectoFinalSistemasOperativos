@@ -38,15 +38,15 @@ function MetricCard({ icon: Icon, label, value, accent }: MetricCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`rounded-xl border p-3 ${accent}`}
+      className={`rounded-2xl border p-3 shadow-[var(--shadow-sm)] ${accent}`}
     >
       <div className="flex items-center gap-2">
         <Icon className="h-4 w-4" />
-        <span className="text-[11px] font-semibold uppercase tracking-wider opacity-90">
+        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] opacity-90">
           {label}
         </span>
       </div>
-      <p className="mt-1.5 text-2xl font-bold tabular-nums">{value}</p>
+      <p className="mt-1.5 font-mono text-[22px] font-bold tabular-nums">{value}</p>
     </motion.div>
   )
 }
@@ -135,12 +135,12 @@ function StepRecap() {
         guía. Toda esta información sale de tus propios procesos.
       </p>
 
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4 lg:gap-3">
         <MetricCard
           icon={Cpu}
           label="Uso de CPU"
           value={schedResult ? `${schedResult.cpuUtilization.toFixed(0)}%` : '—'}
-          accent="border-indigo-500/40 bg-indigo-500/10 text-indigo-200"
+          accent="border-[color:var(--accent)]/30 bg-[color:var(--accent-soft)] text-[color:var(--accent)]"
         />
         <MetricCard
           icon={Trophy}
@@ -150,13 +150,13 @@ function StepRecap() {
               ? `${schedResult.averages.avgWaitingTime.toFixed(1)}s`
               : '—'
           }
-          accent="border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
+          accent="border-emerald-300/30 bg-emerald-300/5 text-emerald-300"
         />
         <MetricCard
           icon={AlertTriangle}
           label="Fallos de página"
           value={replSummary ? String(replSummary.faults) : '—'}
-          accent="border-rose-500/40 bg-rose-500/10 text-rose-200"
+          accent="border-rose-300/30 bg-rose-300/5 text-rose-300"
         />
         <MetricCard
           icon={CheckCircle}
@@ -164,7 +164,7 @@ function StepRecap() {
           value={
             replSummary ? `${replSummary.hitRatio.toFixed(0)}%` : '—'
           }
-          accent="border-sky-500/40 bg-sky-500/10 text-sky-200"
+          accent="border-sky-300/30 bg-sky-300/5 text-sky-300"
         />
       </div>
 
@@ -207,7 +207,7 @@ function StepRecap() {
         <button
           type="button"
           onClick={handleContinueFreeMode}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-sm font-semibold text-white shadow-lg shadow-indigo-900/30 transition active:scale-[0.98] hover:brightness-110"
+          className="btn-primary h-12 w-full"
         >
           {COMMON.goFreeMode}
           <ArrowRight size={16} />
@@ -216,7 +216,7 @@ function StepRecap() {
         <button
           type="button"
           onClick={handleRestart}
-          className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-gray-700 bg-gray-900/60 text-sm font-medium text-gray-300 transition active:scale-[0.98] hover:bg-gray-800"
+          className="btn-ghost h-11 w-full"
         >
           <RotateCcw size={14} />
           Volver a empezar la guía
@@ -224,7 +224,7 @@ function StepRecap() {
 
         <Link
           to="/"
-          className="flex h-10 w-full items-center justify-center gap-1 text-xs font-medium text-gray-500 transition hover:text-gray-300"
+          className="flex h-10 w-full items-center justify-center gap-1 text-[12px] font-medium text-[color:var(--text-faint)] transition hover:text-[color:var(--text)]"
         >
           Ir a la pantalla de inicio
         </Link>

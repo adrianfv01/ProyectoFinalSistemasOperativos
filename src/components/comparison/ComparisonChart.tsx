@@ -10,11 +10,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import { useIsMobile } from '../../utils/useIsMobile'
-
-const PALETTE = [
-  '#6366f1', '#f43f5e', '#10b981', '#f59e0b',
-  '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6',
-]
+import { useChartTheme } from '../../utils/chartTheme'
 
 export interface SchedulingComparisonEntry {
   algorithm: string
@@ -35,14 +31,6 @@ interface ComparisonChartProps {
   replacementResults: ReplacementComparisonEntry[]
 }
 
-const axisStyle = { fill: '#d1d5db', fontSize: 12 }
-const gridStroke = '#374151'
-const tooltipStyle = {
-  contentStyle: { backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 },
-  labelStyle: { color: '#e5e7eb' },
-  itemStyle: { color: '#e5e7eb' },
-}
-
 function ChartCard({
   title,
   children,
@@ -53,11 +41,13 @@ function ChartCard({
   carousel?: boolean
 }) {
   const baseClass = carousel
-    ? 'min-w-[88%] shrink-0 snap-start rounded-xl border border-gray-700 bg-gray-800/60 p-4 sm:min-w-[60%]'
-    : 'rounded-xl border border-gray-700 bg-gray-800/60 p-4'
+    ? 'surface-card min-w-[88%] shrink-0 snap-start p-4 sm:min-w-[60%]'
+    : 'surface-card p-4'
   return (
     <div className={baseClass}>
-      <h3 className="mb-3 text-sm font-semibold text-gray-200">{title}</h3>
+      <h3 className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
+        {title}
+      </h3>
       <div className="h-64 sm:h-72">{children}</div>
     </div>
   )
@@ -70,6 +60,7 @@ export default function ComparisonChart({
   const hasScheduling = schedulingResults.length > 0
   const hasReplacement = replacementResults.length > 0
   const isMobile = useIsMobile()
+  const theme = useChartTheme()
   const carouselRef = useRef<HTMLDivElement | null>(null)
   const [activeIdx, setActiveIdx] = useState(0)
   const [count, setCount] = useState(0)
@@ -98,23 +89,25 @@ export default function ComparisonChart({
 
   const charts: React.ReactNode[] = []
 
+  const labelStyle = { fill: theme.textFaint, fontSize: 11, fontFamily: theme.axis.fontFamily }
+
   if (hasScheduling) {
     charts.push(
       <ChartCard key="tat" title="Tiempo de retorno promedio" carousel={isMobile}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={schedulingResults} margin={{ top: 20, right: 20, bottom: 5, left: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-            <XAxis dataKey="label" tick={axisStyle} />
-            <YAxis tick={axisStyle} unit=" ut" />
-            <Tooltip {...tooltipStyle} />
+            <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} />
+            <XAxis dataKey="label" tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} />
+            <YAxis tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} unit=" ut" />
+            <Tooltip {...theme.tooltip} />
             <Bar
               dataKey="avgTurnaroundTime"
               name="Retorno promedio"
-              radius={[4, 4, 0, 0]}
-              label={{ position: 'top', fill: '#9ca3af', fontSize: 11 }}
+              radius={[6, 6, 0, 0]}
+              label={{ position: 'top', ...labelStyle }}
             >
               {schedulingResults.map((_, i) => (
-                <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
+                <Cell key={i} fill={theme.palette[i % theme.palette.length]} />
               ))}
             </Bar>
           </BarChart>
@@ -126,18 +119,18 @@ export default function ComparisonChart({
       <ChartCard key="wt" title="Tiempo de espera promedio" carousel={isMobile}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={schedulingResults} margin={{ top: 20, right: 20, bottom: 5, left: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-            <XAxis dataKey="label" tick={axisStyle} />
-            <YAxis tick={axisStyle} unit=" ut" />
-            <Tooltip {...tooltipStyle} />
+            <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} />
+            <XAxis dataKey="label" tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} />
+            <YAxis tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} unit=" ut" />
+            <Tooltip {...theme.tooltip} />
             <Bar
               dataKey="avgWaitingTime"
               name="Espera promedio"
-              radius={[4, 4, 0, 0]}
-              label={{ position: 'top', fill: '#9ca3af', fontSize: 11 }}
+              radius={[6, 6, 0, 0]}
+              label={{ position: 'top', ...labelStyle }}
             >
               {schedulingResults.map((_, i) => (
-                <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
+                <Cell key={i} fill={theme.palette[i % theme.palette.length]} />
               ))}
             </Bar>
           </BarChart>
@@ -149,18 +142,18 @@ export default function ComparisonChart({
       <ChartCard key="cpu" title="Uso de CPU (%)" carousel={isMobile}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={schedulingResults} margin={{ top: 20, right: 20, bottom: 5, left: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-            <XAxis dataKey="label" tick={axisStyle} />
-            <YAxis tick={axisStyle} unit="%" domain={[0, 100]} />
-            <Tooltip {...tooltipStyle} />
+            <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} />
+            <XAxis dataKey="label" tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} />
+            <YAxis tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} unit="%" domain={[0, 100]} />
+            <Tooltip {...theme.tooltip} />
             <Bar
               dataKey="cpuUtilization"
               name="Uso de CPU"
-              radius={[4, 4, 0, 0]}
-              label={{ position: 'top', fill: '#9ca3af', fontSize: 11 }}
+              radius={[6, 6, 0, 0]}
+              label={{ position: 'top', ...labelStyle }}
             >
               {schedulingResults.map((_, i) => (
-                <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
+                <Cell key={i} fill={theme.palette[i % theme.palette.length]} />
               ))}
             </Bar>
           </BarChart>
@@ -174,18 +167,18 @@ export default function ComparisonChart({
       <ChartCard key="pf" title="Fallos de página" carousel={isMobile}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={replacementResults} margin={{ top: 20, right: 20, bottom: 5, left: 10 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-            <XAxis dataKey="label" tick={axisStyle} />
-            <YAxis tick={axisStyle} allowDecimals={false} />
-            <Tooltip {...tooltipStyle} />
+            <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} />
+            <XAxis dataKey="label" tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} />
+            <YAxis tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} allowDecimals={false} />
+            <Tooltip {...theme.tooltip} />
             <Bar
               dataKey="pageFaults"
               name="Fallos de página"
-              radius={[4, 4, 0, 0]}
-              label={{ position: 'top', fill: '#9ca3af', fontSize: 11 }}
+              radius={[6, 6, 0, 0]}
+              label={{ position: 'top', ...labelStyle }}
             >
               {replacementResults.map((_, i) => (
-                <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
+                <Cell key={i} fill={theme.palette[i % theme.palette.length]} />
               ))}
             </Bar>
           </BarChart>
@@ -210,7 +203,9 @@ export default function ComparisonChart({
               <span
                 key={i}
                 className={`h-1.5 rounded-full transition-all ${
-                  i === activeIdx ? 'w-5 bg-indigo-400' : 'w-1.5 bg-gray-600'
+                  i === activeIdx
+                    ? 'w-5 bg-[color:var(--accent)]'
+                    : 'w-1.5 bg-[color:var(--border-strong)]'
                 }`}
               />
             ))}

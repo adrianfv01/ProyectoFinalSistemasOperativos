@@ -33,12 +33,14 @@ export default function ReadyQueue() {
   }, [timeline, currentStep, processes])
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
-      <h2 className="mb-3 text-sm font-semibold text-gray-400">Cola de listos</h2>
+    <div className="surface-card p-4">
+      <h2 className="mb-3 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
+        Cola de listos
+      </h2>
       <div className="flex min-h-[40px] flex-wrap gap-2">
         <AnimatePresence mode="popLayout">
           {readyPids.length === 0 ? (
-            <span className="text-sm text-gray-500">Sin procesos en espera</span>
+            <span className="text-[13px] text-[color:var(--text-faint)]">Sin procesos en espera</span>
           ) : (
             readyPids.map((pid) => (
               <motion.span
@@ -49,7 +51,7 @@ export default function ReadyQueue() {
                 exit={{ scale: 0, opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                 style={{ backgroundColor: getProcessColor(pid) }}
-                className="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold text-white"
+                className="inline-flex items-center rounded-full px-3 py-1 font-mono text-[11px] font-bold tabular-nums text-white shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
               >
                 P{pid}
               </motion.span>

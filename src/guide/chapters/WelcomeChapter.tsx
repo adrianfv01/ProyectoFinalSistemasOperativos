@@ -59,13 +59,13 @@ function StepWelcome() {
       />
 
       <ConceptCard title="Lo que vas a recorrer" icon={Sparkles}>
-        <ul className="space-y-2">
+        <ul className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-x-4 lg:gap-y-2 lg:space-y-0">
           {CHAPTERS_PREVIEW.map((c) => (
             <li key={c.title} className="flex items-start gap-2.5">
-              <c.icon className="mt-0.5 h-4 w-4 shrink-0 text-indigo-400" />
+              <c.icon className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--accent)]" />
               <span>
-                <strong className="text-gray-100">{c.title}.</strong>{' '}
-                <span className="text-gray-400">{c.body}</span>
+                <strong className="text-[color:var(--text)]">{c.title}.</strong>{' '}
+                <span className="text-[color:var(--text-muted)]">{c.body}</span>
               </span>
             </li>
           ))}
@@ -73,11 +73,7 @@ function StepWelcome() {
       </ConceptCard>
 
       {miniProcesses.length === 0 && (
-        <button
-          type="button"
-          onClick={seedDefaultProcesses}
-          className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-indigo-500/40 bg-indigo-500/10 px-4 text-sm font-medium text-indigo-200 transition active:scale-[0.98] hover:bg-indigo-500/20"
-        >
+        <button type="button" onClick={seedDefaultProcesses} className="btn-ghost h-11 w-full">
           <Sparkles size={16} />
           Cargar ejemplo (3 procesos)
         </button>

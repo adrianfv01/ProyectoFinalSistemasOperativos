@@ -29,20 +29,22 @@ export default function ReplacementAlgorithmSelector() {
   const noProcesses = processes.length === 0
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-800 p-4">
-      <h2 className="mb-3 text-base font-semibold text-gray-100 sm:text-lg">
+    <div className="surface-card p-4">
+      <h2 className="mb-3 text-[15px] font-semibold tracking-tight text-[color:var(--text)] sm:text-[16px]">
         Configuración del algoritmo
       </h2>
 
       <div className="space-y-3">
         <div>
-          <label className="mb-1 block text-sm text-gray-400">Algoritmo</label>
+          <label className="mb-1.5 block text-[12px] font-medium text-[color:var(--text-muted)]">
+            Algoritmo
+          </label>
           <select
             value={selectedAlgorithm}
             onChange={(e) =>
               setSelectedAlgorithm(e.target.value as ReplacementAlgorithmName)
             }
-            className="h-12 w-full rounded-lg border border-gray-600 bg-gray-700 px-3 text-base text-gray-100 outline-none focus:border-indigo-500 sm:h-11 sm:text-sm"
+            className="h-12 w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 text-[15px] text-[color:var(--text)] outline-none transition focus:border-[color:var(--accent)]/50 focus:shadow-[0_0_0_3px_var(--accent-soft)] sm:h-11 sm:text-[13px]"
           >
             {algorithmKeys.map((key) => (
               <option key={key} value={key}>
@@ -62,25 +64,18 @@ export default function ReplacementAlgorithmSelector() {
         />
 
         <div className="flex gap-2 pt-1">
-          <button
-            onClick={handleRun}
-            disabled={noProcesses}
-            className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 sm:h-11 sm:rounded-lg"
-          >
+          <button onClick={handleRun} disabled={noProcesses} className="btn-primary h-12 flex-1 sm:h-11">
             <Play size={16} />
             Ejecutar
           </button>
-          <button
-            onClick={reset}
-            className="flex h-12 items-center justify-center gap-2 rounded-xl border border-gray-600 px-4 text-sm font-medium text-gray-300 transition active:bg-gray-700 sm:h-11 sm:rounded-lg"
-          >
+          <button onClick={reset} className="btn-ghost h-12 sm:h-11">
             <RotateCcw size={16} />
             Reiniciar
           </button>
         </div>
 
         {noProcesses && (
-          <p className="text-xs text-yellow-400">
+          <p className="rounded-lg border border-amber-300/30 bg-amber-300/5 px-3 py-2 text-[12px] text-amber-300">
             Agrega procesos en la sección de Procesos antes de ejecutar.
           </p>
         )}

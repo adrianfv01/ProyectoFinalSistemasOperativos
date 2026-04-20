@@ -40,6 +40,7 @@ export default function GuideRouter() {
   const {
     currentChapterId,
     currentStepIndex,
+    completedChapters,
     setChapter,
     setStep,
     markChapterCompleted,
@@ -111,10 +112,28 @@ export default function GuideRouter() {
     navigate(`/guia/${chapter.slug}/${stepIndex}`)
   }
 
+  function jumpTo(slug: string, targetStepIndex: number) {
+    const target = CHAPTERS.find((c) => c.slug === slug)
+    if (!target) return
+    const targetIdx = CHAPTERS.indexOf(target)
+    const isAccessibleChapter =
+      completedChapters.includes(target.id) || targetIdx <= chapterIndex
+    if (!isAccessibleChapter) return
+    const safeStep = Math.max(
+      0,
+      Math.min(target.steps.length - 1, targetStepIndex),
+    )
+    navigate(`/guia/${target.slug}/${safeStep + 1}`)
+  }
+
   const stepKey = `${chapter.id}-${stepIndex}`
 
   return (
     <GuideShell
+      chapters={CHAPTERS}
+      currentChapterId={chapter.id}
+      currentStepIndex={stepIndex}
+      completedChapterIds={completedChapters}
       chapterLabel={chapter.label}
       chapterIndex={chapterIndex}
       totalChapters={CHAPTERS.length}
@@ -122,6 +141,7 @@ export default function GuideRouter() {
       totalSteps={chapter.steps.length}
       onBack={goBack}
       onNext={goNext}
+      onJumpTo={jumpTo}
       canBack
       canNext={canAdvance && !isLastStepEver}
       nextLabel={isLastStepInChapter && !isLastChapter ? COMMON.finish : undefined}

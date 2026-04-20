@@ -10,7 +10,7 @@ import Modal from '../ui/Modal'
 const STATE_LABELS: Record<ProcessState, string> = {
   new: 'Nuevo',
   ready: 'Listo',
-  running: 'Ejecución',
+  running: 'Ejecuci?n',
   waiting: 'Espera',
   terminated: 'Terminado',
 }
@@ -29,7 +29,7 @@ interface EditState {
 }
 
 const inputClass =
-  'w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2.5 text-base text-gray-100 outline-none focus:border-indigo-500'
+  'w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2.5 text-[15px] text-[color:var(--text)] outline-none transition focus:border-[color:var(--accent)]/50 focus:shadow-[0_0_0_3px_var(--accent-soft)]'
 
 export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
   const processes = useProcessStore((s) => s.processes)
@@ -104,13 +104,13 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                 onClick={() => onSelectPid(p.pid)}
                 className={`flex w-full items-center gap-3 rounded-2xl border p-4 text-left transition active:scale-[0.99] ${
                   isSelected
-                    ? 'border-indigo-500/60 bg-indigo-500/10'
-                    : 'border-gray-700 bg-gray-900'
+                    ? 'border-[color:var(--accent)]/60 bg-[color:var(--accent-soft)]'
+                    : 'border-[color:var(--border)] bg-[color:var(--surface)]'
                 }`}
                 data-no-swipe
               >
                 <div
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-base font-bold text-white"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-[15px] font-bold text-white shadow-[0_4px_12px_-4px_rgba(0,0,0,0.4)]"
                   style={{ backgroundColor: color }}
                 >
                   P{p.pid}
@@ -118,29 +118,32 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span
-                      className="rounded-md bg-gray-800 px-2 py-0.5 text-[11px] font-medium text-gray-300"
-                    >
-                      {STATE_LABELS[p.state]}
-                    </span>
+                    <span className="chip">{STATE_LABELS[p.state]}</span>
                     {p.threads.length > 0 && (
-                      <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-400">
+                      <span
+                        className="chip"
+                        style={{
+                          color: '#86EFAC',
+                          borderColor: 'rgba(134,239,172,0.25)',
+                          background: 'rgba(134,239,172,0.08)',
+                        }}
+                      >
                         {p.threads.length} hilo{p.threads.length === 1 ? '' : 's'}
                       </span>
                     )}
                   </div>
-                  <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[12px] text-gray-400">
+                  <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[12px] text-[color:var(--text-muted)]">
                     <span>
-                      Llegada: <span className="font-mono text-gray-200">{p.arrivalTime}</span>
+                      Llegada: <span className="font-mono tabular-nums text-[color:var(--text)]">{p.arrivalTime}</span>
                     </span>
                     <span>
-                      Ráfaga: <span className="font-mono text-gray-200">{p.burstTime}</span>
+                      R?faga:                       <span className="font-mono tabular-nums text-[color:var(--text)]">{p.burstTime}</span>
                     </span>
                     <span>
-                      Prio.: <span className="font-mono text-gray-200">{p.priority}</span>
+                      Prio.: <span className="font-mono tabular-nums text-[color:var(--text)]">{p.priority}</span>
                     </span>
                     <span>
-                      Págs.: <span className="font-mono text-gray-200">{p.numPages}</span>
+                      P?gs.: <span className="font-mono tabular-nums text-[color:var(--text)]">{p.numPages}</span>
                     </span>
                   </div>
                 </div>
@@ -150,7 +153,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                     e.stopPropagation()
                     setActionsForPid(p.pid)
                   }}
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-gray-300 transition active:bg-gray-800"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[color:var(--text-muted)] transition hover:text-[color:var(--text)] active:bg-[color:var(--surface-2)]"
                   aria-label={`Acciones de proceso ${p.pid}`}
                 >
                   <MoreVertical size={20} />
@@ -161,22 +164,22 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
         </AnimatePresence>
 
         {processes.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-gray-700 bg-gray-900/50 px-4 py-10 text-center text-sm text-gray-500">
-            Aún no agregas procesos. Toca el botón de la esquina inferior para crear uno.
+          <div className="surface-glass rounded-2xl border-dashed px-4 py-10 text-center text-[13px] text-[color:var(--text-muted)]">
+            A?n no agregas procesos. Toca el bot?n de la esquina inferior para crear uno.
           </div>
         )}
       </div>
 
-      <div className="hidden overflow-hidden rounded-xl border border-gray-700 bg-gray-900 lg:block">
+      <div className="surface-card hidden overflow-hidden lg:block">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-gray-700 bg-gray-800/60 text-xs font-medium uppercase tracking-wider text-gray-400">
+              <tr className="border-b border-[color:var(--border)] bg-[color:var(--surface-2)] font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[color:var(--text-muted)]">
                 <th className="px-3 py-3">PID</th>
                 <th className="px-3 py-3">Llegada</th>
-                <th className="px-3 py-3">Ráfaga</th>
+                <th className="px-3 py-3">R?faga</th>
                 <th className="px-3 py-3">Prioridad</th>
-                <th className="px-3 py-3">Páginas</th>
+                <th className="px-3 py-3">P?ginas</th>
                 <th className="px-3 py-3">Estado</th>
                 <th className="px-3 py-3">Hilos</th>
                 <th className="px-3 py-3 text-right">Acciones</th>
@@ -197,8 +200,10 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.2 }}
                       onClick={() => onSelectPid(p.pid)}
-                      className={`cursor-pointer border-b border-gray-800 transition-colors ${
-                        isSelected ? 'bg-indigo-500/10' : 'hover:bg-gray-800/50'
+                      className={`cursor-pointer border-b border-[color:var(--border)] transition-colors ${
+                        isSelected
+                          ? 'bg-[color:var(--accent-soft)]'
+                          : 'hover:bg-[color:var(--surface-2)]'
                       }`}
                     >
                       <td className={cellBase}>
@@ -221,7 +226,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                               onChange={(e) =>
                                 setEditing({ ...editing, arrivalTime: parseInt(e.target.value) || 0 })
                               }
-                              className="w-16 rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-gray-100 outline-none focus:border-indigo-500"
+                              className="w-16 rounded-md border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 font-mono text-xs tabular-nums text-[color:var(--text)] outline-none focus:border-[color:var(--accent)]/50"
                               onClick={(e) => e.stopPropagation()}
                             />
                           </td>
@@ -234,7 +239,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                               onChange={(e) =>
                                 setEditing({ ...editing, burstTime: parseInt(e.target.value) || 1 })
                               }
-                              className="w-16 rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-gray-100 outline-none focus:border-indigo-500"
+                              className="w-16 rounded-md border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 font-mono text-xs tabular-nums text-[color:var(--text)] outline-none focus:border-[color:var(--accent)]/50"
                               onClick={(e) => e.stopPropagation()}
                             />
                           </td>
@@ -247,7 +252,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                               onChange={(e) =>
                                 setEditing({ ...editing, priority: parseInt(e.target.value) || 0 })
                               }
-                              className="w-16 rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-gray-100 outline-none focus:border-indigo-500"
+                              className="w-16 rounded-md border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 font-mono text-xs tabular-nums text-[color:var(--text)] outline-none focus:border-[color:var(--accent)]/50"
                               onClick={(e) => e.stopPropagation()}
                             />
                           </td>
@@ -260,27 +265,25 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                               onChange={(e) =>
                                 setEditing({ ...editing, numPages: parseInt(e.target.value) || 0 })
                               }
-                              className="w-16 rounded border border-gray-600 bg-gray-800 px-2 py-1 text-xs text-gray-100 outline-none focus:border-indigo-500"
+                              className="w-16 rounded-md border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 font-mono text-xs tabular-nums text-[color:var(--text)] outline-none focus:border-[color:var(--accent)]/50"
                               onClick={(e) => e.stopPropagation()}
                             />
                           </td>
                         </>
                       ) : (
                         <>
-                          <td className={`${cellBase} text-gray-300`}>{p.arrivalTime}</td>
-                          <td className={`${cellBase} text-gray-300`}>{p.burstTime}</td>
-                          <td className={`${cellBase} text-gray-300`}>{p.priority}</td>
-                          <td className={`${cellBase} text-gray-300`}>{p.numPages}</td>
+                          <td className={`${cellBase} font-mono tabular-nums text-[color:var(--text-muted)]`}>{p.arrivalTime}</td>
+                          <td className={`${cellBase} font-mono tabular-nums text-[color:var(--text-muted)]`}>{p.burstTime}</td>
+                          <td className={`${cellBase} font-mono tabular-nums text-[color:var(--text-muted)]`}>{p.priority}</td>
+                          <td className={`${cellBase} font-mono tabular-nums text-[color:var(--text-muted)]`}>{p.numPages}</td>
                         </>
                       )}
 
                       <td className={cellBase}>
-                        <span className="rounded bg-gray-800 px-2 py-0.5 text-xs text-gray-300">
-                          {STATE_LABELS[p.state]}
-                        </span>
+                        <span className="chip">{STATE_LABELS[p.state]}</span>
                       </td>
 
-                      <td className={`${cellBase} text-center text-gray-300`}>
+                      <td className={`${cellBase} text-center font-mono tabular-nums text-[color:var(--text-muted)]`}>
                         {p.threads.length}
                       </td>
 
@@ -293,7 +296,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                                   e.stopPropagation()
                                   saveEdit()
                                 }}
-                                className="rounded p-1 text-emerald-400 transition hover:bg-emerald-400/10"
+                                className="rounded-md p-1.5 text-emerald-300 transition hover:bg-emerald-300/10"
                                 title="Guardar"
                               >
                                 <Check size={14} />
@@ -303,7 +306,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                                   e.stopPropagation()
                                   setEditing(null)
                                 }}
-                                className="rounded p-1 text-gray-400 transition hover:bg-gray-700"
+                                className="rounded-md p-1.5 text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)]"
                                 title="Cancelar"
                               >
                                 <X size={14} />
@@ -316,7 +319,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                                   e.stopPropagation()
                                   startEdit(p)
                                 }}
-                                className="rounded p-1 text-gray-400 transition hover:bg-gray-700 hover:text-indigo-400"
+                                className="rounded-md p-1.5 text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)] hover:text-[color:var(--accent)]"
                                 title="Editar"
                               >
                                 <Pencil size={14} />
@@ -329,14 +332,14 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                                       removeProcess(p.pid)
                                       setConfirmDelete(null)
                                     }}
-                                    className="rounded p-1 text-red-400 transition hover:bg-red-400/10"
+                                    className="rounded-md p-1.5 text-rose-300 transition hover:bg-rose-300/10"
                                     title="Confirmar"
                                   >
                                     <Check size={14} />
                                   </button>
                                   <button
                                     onClick={() => setConfirmDelete(null)}
-                                    className="rounded p-1 text-gray-400 transition hover:bg-gray-700"
+                                    className="rounded-md p-1.5 text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)]"
                                     title="Cancelar"
                                   >
                                     <X size={14} />
@@ -348,7 +351,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                                     e.stopPropagation()
                                     setConfirmDelete(p.pid)
                                   }}
-                                  className="rounded p-1 text-gray-400 transition hover:bg-gray-700 hover:text-red-400"
+                                  className="rounded-md p-1.5 text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)] hover:text-rose-300"
                                   title="Eliminar"
                                 >
                                   <Trash2 size={14} />
@@ -360,7 +363,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                                   e.stopPropagation()
                                   forkProcess(p.pid)
                                 }}
-                                className="rounded p-1 text-gray-400 transition hover:bg-gray-700 hover:text-amber-400"
+                                className="rounded-md p-1.5 text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)] hover:text-amber-300"
                                 title="Fork"
                               >
                                 <GitFork size={14} />
@@ -371,7 +374,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                                   e.stopPropagation()
                                   openThreadSheet(p.pid)
                                 }}
-                                className="rounded p-1 text-gray-400 transition hover:bg-gray-700 hover:text-emerald-400"
+                                className="rounded-md p-1.5 text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)] hover:text-emerald-300"
                                 title="Agregar hilo"
                               >
                                 <Plus size={14} />
@@ -389,7 +392,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
         </div>
 
         {processes.length === 0 && (
-          <div className="py-10 text-center text-sm text-gray-500">
+          <div className="py-10 text-center text-[13px] text-[color:var(--text-muted)]">
             No hay procesos. Agrega uno o carga un archivo.
           </div>
         )}
@@ -404,9 +407,9 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
           <div className="grid gap-2">
             <SheetAction
               icon={<Pencil size={18} />}
-              label="Editar parámetros"
+              label="Editar par?metros"
               onClick={() => startEdit(actionsProcess)}
-              accent="text-indigo-300"
+              accent="text-[color:var(--accent)]"
             />
             <SheetAction
               icon={<Plus size={18} />}
@@ -430,7 +433,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                 setActionsForPid(null)
                 setConfirmDelete(actionsProcess.pid)
               }}
-              accent="text-red-300"
+              accent="text-rose-300"
             />
           </div>
         )}
@@ -451,7 +454,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                 onChange={(v) => setEditing({ ...editing, arrivalTime: v })}
               />
               <NumberField
-                label="Ráfaga"
+                label="R?faga"
                 value={editing.burstTime}
                 min={1}
                 onChange={(v) => setEditing({ ...editing, burstTime: v })}
@@ -463,7 +466,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                 onChange={(v) => setEditing({ ...editing, priority: v })}
               />
               <NumberField
-                label="Páginas"
+                label="P?ginas"
                 value={editing.numPages}
                 min={0}
                 onChange={(v) => setEditing({ ...editing, numPages: v })}
@@ -471,17 +474,11 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
             </div>
 
             <div className="flex flex-col gap-2">
-              <button
-                onClick={saveEdit}
-                className="flex h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition active:scale-[0.98]"
-              >
+              <button onClick={saveEdit} className="btn-primary h-12">
                 <Check size={18} />
                 Guardar cambios
               </button>
-              <button
-                onClick={() => setEditing(null)}
-                className="flex h-11 items-center justify-center rounded-xl border border-gray-700 text-sm font-medium text-gray-300 transition active:bg-gray-800"
-              >
+              <button onClick={() => setEditing(null)} className="btn-ghost h-11">
                 Cancelar
               </button>
             </div>
@@ -496,7 +493,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
       >
         <div className="space-y-4">
           <label className="block">
-            <span className="mb-1 block text-sm text-gray-400">Tiempo de ráfaga del hilo</span>
+            <span className="mb-1.5 block text-[12px] font-medium text-[color:var(--text-muted)]">Tiempo de r?faga del hilo</span>
             <input
               type="number"
               inputMode="numeric"
@@ -512,7 +509,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
           <button
             onClick={confirmAddThread}
             disabled={!threadBurst || parseInt(threadBurst, 10) <= 0}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition active:scale-[0.98] disabled:opacity-40"
+            className="btn-primary h-12 w-full"
           >
             <Plus size={18} />
             Agregar hilo
@@ -526,15 +523,12 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
         title="Eliminar proceso"
         description={
           confirmDelete !== null
-            ? `Se eliminará P${confirmDelete} junto con sus hilos. Esta acción no se puede deshacer.`
+            ? `Se eliminar? P${confirmDelete} junto con sus hilos. Esta acci?n no se puede deshacer.`
             : ''
         }
         actions={
           <>
-            <button
-              onClick={() => setConfirmDelete(null)}
-              className="h-11 rounded-xl border border-gray-700 px-4 text-sm font-medium text-gray-300 transition active:bg-gray-800"
-            >
+            <button onClick={() => setConfirmDelete(null)} className="btn-ghost h-11">
               Cancelar
             </button>
             <button
@@ -542,7 +536,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                 if (confirmDelete !== null) removeProcess(confirmDelete)
                 setConfirmDelete(null)
               }}
-              className="h-11 rounded-xl bg-red-600 px-4 text-sm font-semibold text-white transition active:scale-[0.98]"
+              className="btn-danger h-11"
             >
               Eliminar
             </button>
@@ -567,12 +561,14 @@ function SheetAction({
   return (
     <button
       onClick={onClick}
-      className="flex h-14 items-center gap-3 rounded-2xl border border-gray-700 bg-gray-800/60 px-4 text-left transition active:bg-gray-800"
+      className="surface-card flex h-14 items-center gap-3 px-4 text-left transition hover:border-[color:var(--accent)]/30 active:scale-[0.99]"
     >
-      <span className={`flex h-9 w-9 items-center justify-center rounded-full bg-gray-900 ${accent}`}>
+      <span
+        className={`flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--border-strong)] bg-[color:var(--surface-2)] ${accent}`}
+      >
         {icon}
       </span>
-      <span className="text-sm font-medium text-gray-100">{label}</span>
+      <span className="text-[14px] font-medium text-[color:var(--text)]">{label}</span>
     </button>
   )
 }
@@ -590,7 +586,9 @@ function NumberField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-gray-400">{label}</span>
+      <span className="mb-1.5 block text-[12px] font-medium text-[color:var(--text-muted)]">
+        {label}
+      </span>
       <input
         type="number"
         inputMode="numeric"

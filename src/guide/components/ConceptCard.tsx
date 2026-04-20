@@ -9,11 +9,23 @@ interface ConceptCardProps {
   tone?: 'neutral' | 'info' | 'success' | 'warning'
 }
 
-const TONES: Record<NonNullable<ConceptCardProps['tone']>, string> = {
-  neutral: 'border-gray-700 bg-gray-900/70',
-  info: 'border-sky-500/40 bg-sky-500/10',
-  success: 'border-emerald-500/40 bg-emerald-500/10',
-  warning: 'border-amber-500/40 bg-amber-500/10',
+const TONES: Record<NonNullable<ConceptCardProps['tone']>, { card: string; icon: string }> = {
+  neutral: {
+    card: 'border-[color:var(--border)] bg-[color:var(--surface)]',
+    icon: 'text-[color:var(--accent)]',
+  },
+  info: {
+    card: 'border-sky-300/30 bg-sky-300/5',
+    icon: 'text-sky-300',
+  },
+  success: {
+    card: 'border-emerald-300/30 bg-emerald-300/5',
+    icon: 'text-emerald-300',
+  },
+  warning: {
+    card: 'border-amber-300/30 bg-amber-300/5',
+    icon: 'text-amber-300',
+  },
 }
 
 export default function ConceptCard({
@@ -22,18 +34,25 @@ export default function ConceptCard({
   children,
   tone = 'neutral',
 }: ConceptCardProps) {
+  const styles = TONES[tone]
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
-      className={`rounded-xl border p-4 ${TONES[tone]}`}
+      className={`rounded-2xl border p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${styles.card}`}
     >
       <div className="mb-2 flex items-center gap-2">
-        {Icon && <Icon className="h-4 w-4 text-gray-300" />}
-        <h3 className="text-sm font-semibold text-gray-100">{title}</h3>
+        {Icon && (
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-[color:var(--border-strong)] bg-[color:var(--surface-2)]">
+            <Icon className={`h-3.5 w-3.5 ${styles.icon}`} strokeWidth={2} />
+          </span>
+        )}
+        <h3 className="text-[13px] font-semibold tracking-tight text-[color:var(--text)]">
+          {title}
+        </h3>
       </div>
-      <div className="space-y-1.5 text-sm leading-relaxed text-gray-300">
+      <div className="space-y-1.5 text-[13px] leading-relaxed text-[color:var(--text-muted)]">
         {children}
       </div>
     </motion.div>

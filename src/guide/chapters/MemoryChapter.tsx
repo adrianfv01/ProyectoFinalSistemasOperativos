@@ -81,9 +81,11 @@ function StepConfig() {
           unit=" KB"
         />
 
-        <div className="flex items-center justify-between rounded-lg border border-indigo-500/30 bg-indigo-500/10 px-3 py-2.5">
-          <span className="text-sm text-indigo-200">Marcos disponibles</span>
-          <span className="text-2xl font-bold tabular-nums text-indigo-300">
+        <div className="flex items-center justify-between rounded-xl border border-[color:var(--accent)]/30 bg-[color:var(--accent-soft)] px-3 py-2.5">
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
+            Marcos disponibles
+          </span>
+          <span className="font-mono text-[22px] font-bold tabular-nums text-[color:var(--accent)]">
             {frames}
           </span>
         </div>

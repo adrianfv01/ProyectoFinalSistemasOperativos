@@ -50,22 +50,23 @@ export default function ProcessForm({ variant = 'card', onCreated }: ProcessForm
   }
 
   const inputClass =
-    'w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2.5 text-base text-gray-100 placeholder-gray-500 outline-none transition focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:text-sm sm:py-2'
+    'w-full rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2.5 font-mono text-[15px] tabular-nums text-[color:var(--text)] outline-none transition placeholder:text-[color:var(--text-faint)] focus:border-[color:var(--accent)]/50 focus:shadow-[0_0_0_3px_var(--accent-soft)] sm:text-[13px] sm:py-2'
 
-  const wrapperClass =
-    variant === 'card'
-      ? 'rounded-xl border border-gray-700 bg-gray-900 p-5'
-      : ''
+  const wrapperClass = variant === 'card' ? 'surface-card p-5' : ''
 
   return (
     <form onSubmit={handleSubmit} className={wrapperClass}>
       {variant === 'card' && (
-        <h2 className="mb-4 text-lg font-semibold text-gray-100">Nuevo proceso</h2>
+        <h2 className="mb-4 text-[15px] font-semibold tracking-tight text-[color:var(--text)]">
+          Nuevo proceso
+        </h2>
       )}
 
       <div className="grid grid-cols-2 gap-3">
-        <label className="space-y-1">
-          <span className="text-xs font-medium text-gray-400">Tiempo de llegada</span>
+        <label className="space-y-1.5">
+          <span className="text-[12px] font-medium text-[color:var(--text-muted)]">
+            Tiempo de llegada
+          </span>
           <input
             type="number"
             inputMode="numeric"
@@ -79,8 +80,10 @@ export default function ProcessForm({ variant = 'card', onCreated }: ProcessForm
           />
         </label>
 
-        <label className="space-y-1">
-          <span className="text-xs font-medium text-gray-400">Ráfaga (burst)</span>
+        <label className="space-y-1.5">
+          <span className="text-[12px] font-medium text-[color:var(--text-muted)]">
+            Ráfaga (burst)
+          </span>
           <input
             type="number"
             inputMode="numeric"
@@ -94,8 +97,10 @@ export default function ProcessForm({ variant = 'card', onCreated }: ProcessForm
           />
         </label>
 
-        <label className="space-y-1">
-          <span className="text-xs font-medium text-gray-400">Prioridad</span>
+        <label className="space-y-1.5">
+          <span className="text-[12px] font-medium text-[color:var(--text-muted)]">
+            Prioridad
+          </span>
           <input
             type="number"
             inputMode="numeric"
@@ -109,8 +114,10 @@ export default function ProcessForm({ variant = 'card', onCreated }: ProcessForm
           />
         </label>
 
-        <label className="space-y-1">
-          <span className="text-xs font-medium text-gray-400">Número de páginas</span>
+        <label className="space-y-1.5">
+          <span className="text-[12px] font-medium text-[color:var(--text-muted)]">
+            Número de páginas
+          </span>
           <input
             type="number"
             inputMode="numeric"
@@ -125,12 +132,13 @@ export default function ProcessForm({ variant = 'card', onCreated }: ProcessForm
         </label>
       </div>
 
-      {error && <p className="mt-3 text-xs text-red-400">{error}</p>}
+      {error && (
+        <p className="mt-3 rounded-lg border border-rose-300/30 bg-rose-300/5 px-3 py-2 text-[12px] text-rose-300">
+          {error}
+        </p>
+      )}
 
-      <button
-        type="submit"
-        className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-500 active:scale-[0.98] sm:h-10 sm:rounded-lg"
-      >
+      <button type="submit" className="btn-primary mt-4 h-12 w-full sm:h-11">
         <Plus size={16} />
         Agregar proceso
       </button>

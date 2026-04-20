@@ -3,8 +3,15 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 import { COMMON } from './copy'
+import type { GuideChapterDefinition } from './types'
+import GuideRailDesktop from './components/GuideRailDesktop'
+import ThemeToggle from '../components/ui/ThemeToggle'
 
 interface GuideShellProps {
+  chapters: GuideChapterDefinition[]
+  currentChapterId: string
+  currentStepIndex: number
+  completedChapterIds: string[]
   chapterLabel: string
   chapterIndex: number
   totalChapters: number
@@ -12,6 +19,7 @@ interface GuideShellProps {
   totalSteps: number
   onBack: () => void
   onNext: () => void
+  onJumpTo: (chapterSlug: string, stepIndex: number) => void
   canBack: boolean
   canNext: boolean
   nextLabel?: string
@@ -20,6 +28,10 @@ interface GuideShellProps {
 }
 
 export default function GuideShell({
+  chapters,
+  currentChapterId,
+  currentStepIndex,
+  completedChapterIds,
   chapterLabel,
   chapterIndex,
   totalChapters,
@@ -27,6 +39,7 @@ export default function GuideShell({
   totalSteps,
   onBack,
   onNext,
+  onJumpTo,
   canBack,
   canNext,
   nextLabel,
@@ -45,77 +58,175 @@ export default function GuideShell({
   }
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-gradient-to-b from-gray-950 via-gray-950 to-gray-900 text-gray-100">
-      <header className="sticky top-0 z-30 border-b border-gray-800/80 bg-gray-950/85 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-4 py-3">
-          <button
-            type="button"
-            onClick={exit}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-gray-400 transition active:scale-95 hover:bg-gray-800 hover:text-gray-200"
-            aria-label={COMMON.exitGuide}
-          >
-            <X size={18} />
-          </button>
+    <div className="relative min-h-[100dvh] text-[color:var(--text)]">
+      {/* aurora sutil para la guía */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-0 h-[420px] w-[680px] -translate-x-1/2 rounded-full bg-[color:var(--accent-soft)] opacity-60 blur-[120px]" />
+      </div>
 
-          <div className="flex flex-col items-center text-center">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-indigo-400">
-              Capítulo {chapterIndex + 1} de {totalChapters}
-            </span>
-            <span className="text-xs font-medium text-gray-200">
-              {chapterLabel}
-            </span>
-          </div>
-
-          <span className="text-xs tabular-nums text-gray-500">
-            {stepIndex + 1}/{totalSteps}
-          </span>
-        </div>
-
-        <div className="mx-auto h-1 w-full max-w-md overflow-hidden bg-gray-800">
-          <motion.div
-            className="h-full bg-gradient-to-r from-indigo-500 to-fuchsia-500"
-            initial={false}
-            animate={{ width: `${overallProgress}%` }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-          />
-        </div>
-      </header>
-
-      <main className="flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-md px-4 py-5 pb-32 sm:px-5">
-          {children}
-        </div>
-      </main>
-
-      <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-gray-800/80 bg-gray-950/95 backdrop-blur">
-        <div className="mx-auto w-full max-w-md px-4 pb-[max(env(safe-area-inset-bottom),12px)] pt-3">
-          {!canNext && blockedHint && (
-            <p className="mb-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-center text-xs text-amber-300">
-              {blockedHint}
-            </p>
-          )}
-          <div className="flex gap-2">
+      {/* ====== Mobile (<1024px) ====== */}
+      <div className="flex min-h-[100dvh] flex-col lg:hidden">
+        <header className="sticky top-0 z-30 border-b border-[color:var(--border)] bg-[color:var(--bg-soft)]/85 backdrop-blur-xl">
+          <div className="mx-auto flex w-full max-w-md items-center justify-between gap-3 px-4 py-3">
             <button
               type="button"
-              onClick={onBack}
-              disabled={!canBack}
-              className="flex h-12 flex-1 items-center justify-center gap-1.5 rounded-xl border border-gray-700 bg-gray-900 text-sm font-semibold text-gray-300 transition active:scale-[0.98] hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+              onClick={exit}
+              className="flex h-9 w-9 items-center justify-center rounded-full text-[color:var(--text-muted)] transition active:scale-95 hover:bg-[color:var(--surface)] hover:text-[color:var(--text)]"
+              aria-label={COMMON.exitGuide}
             >
-              <ChevronLeft size={18} />
-              {COMMON.back}
+              <X size={18} />
             </button>
-            <button
-              type="button"
-              onClick={onNext}
-              disabled={!canNext}
-              className="flex h-12 flex-[1.6] items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-sm font-semibold text-white shadow-lg shadow-indigo-900/30 transition active:scale-[0.98] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
-            >
-              {nextLabel ?? COMMON.next}
-              <ChevronRight size={18} />
-            </button>
+
+            <div className="flex flex-col items-center text-center">
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
+                Capítulo {chapterIndex + 1} de {totalChapters}
+              </span>
+              <span className="text-xs font-medium text-[color:var(--text)]">
+                {chapterLabel}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[11px] tabular-nums text-[color:var(--text-faint)]">
+                {stepIndex + 1}/{totalSteps}
+              </span>
+              <ThemeToggle />
+            </div>
           </div>
+
+          <div className="relative mx-auto h-[2px] w-full max-w-md overflow-hidden bg-[color:var(--border)]">
+            <motion.div
+              className="absolute inset-y-0 left-0 bg-[color:var(--accent)] shadow-[0_0_8px_var(--accent)]"
+              initial={false}
+              animate={{ width: `${overallProgress}%` }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            />
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-md px-4 py-5 pb-32 sm:px-5">
+            {children}
+          </div>
+        </main>
+
+        <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-[color:var(--border)] bg-[color:var(--bg-soft)]/90 backdrop-blur-xl">
+          <div className="mx-auto w-full max-w-md px-4 pb-[max(env(safe-area-inset-bottom),12px)] pt-3">
+            {!canNext && blockedHint && (
+              <p className="mb-2 rounded-lg border border-[color:var(--border-strong)] bg-[color:var(--surface)] px-3 py-2 text-center text-xs text-[color:var(--text-muted)]">
+                {blockedHint}
+              </p>
+            )}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={onBack}
+                disabled={!canBack}
+                className="btn-ghost h-12 flex-1"
+              >
+                <ChevronLeft size={18} />
+                {COMMON.back}
+              </button>
+              <button
+                type="button"
+                onClick={onNext}
+                disabled={!canNext}
+                className="btn-primary h-12 flex-[1.6]"
+              >
+                {nextLabel ?? COMMON.next}
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          </div>
+        </footer>
+      </div>
+
+      {/* ====== Desktop (>=1024px) ====== */}
+      <div className="hidden lg:flex">
+        <GuideRailDesktop
+          chapters={chapters}
+          currentChapterId={currentChapterId}
+          currentStepIndex={currentStepIndex}
+          completedChapterIds={completedChapterIds}
+          onJumpTo={onJumpTo}
+        />
+
+        <div className="flex min-h-[100dvh] flex-1 flex-col lg:ml-64">
+          <header className="sticky top-0 z-30 border-b border-[color:var(--border)] bg-[color:var(--bg-soft)]/80 backdrop-blur-xl">
+            <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-8 py-4">
+              <div className="flex items-baseline gap-3">
+                <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
+                  Capítulo {chapterIndex + 1} de {totalChapters}
+                </span>
+                <span className="text-sm font-semibold text-[color:var(--text)]">
+                  {chapterLabel}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-[11px] tabular-nums text-[color:var(--text-faint)]">
+                  Paso {stepIndex + 1} de {totalSteps}
+                </span>
+                <ThemeToggle size="regular" />
+                <button
+                  type="button"
+                  onClick={exit}
+                  className="flex h-9 items-center gap-1.5 rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] px-3 text-xs font-medium text-[color:var(--text-muted)] transition hover:border-[color:var(--border-strong)] hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)]"
+                  aria-label={COMMON.exitGuide}
+                >
+                  <X size={14} />
+                  Salir
+                </button>
+              </div>
+            </div>
+
+            <div className="relative mx-auto h-[2px] w-full max-w-3xl overflow-hidden bg-[color:var(--border)]">
+              <motion.div
+                className="absolute inset-y-0 left-0 bg-[color:var(--accent)] shadow-[0_0_8px_var(--accent)]"
+                initial={false}
+                animate={{ width: `${overallProgress}%` }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </div>
+          </header>
+
+          <main className="flex-1 overflow-y-auto">
+            <div className="mx-auto w-full max-w-3xl px-8 py-10 pb-36">
+              {children}
+            </div>
+          </main>
+
+          <footer className="sticky bottom-0 z-30 border-t border-[color:var(--border)] bg-[color:var(--bg-soft)]/90 backdrop-blur-xl">
+            <div className="mx-auto w-full max-w-3xl px-8 py-4">
+              {!canNext && blockedHint && (
+                <p className="mb-3 rounded-lg border border-[color:var(--border-strong)] bg-[color:var(--surface)] px-3 py-2 text-center text-xs text-[color:var(--text-muted)]">
+                  {blockedHint}
+                </p>
+              )}
+              <div className="flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={onBack}
+                  disabled={!canBack}
+                  className="btn-ghost h-11"
+                >
+                  <ChevronLeft size={18} />
+                  {COMMON.back}
+                </button>
+                <button
+                  type="button"
+                  onClick={onNext}
+                  disabled={!canNext}
+                  className="btn-primary h-11"
+                >
+                  {nextLabel ?? COMMON.next}
+                  <ChevronRight size={18} />
+                </button>
+              </div>
+            </div>
+          </footer>
         </div>
-      </footer>
+      </div>
     </div>
   )
 }

@@ -68,7 +68,7 @@ export default function SimulationControls({ variant = 'card' }: Props) {
 
   const containerClass =
     variant === 'card'
-      ? 'flex flex-col gap-3 rounded-xl border border-gray-700 bg-gray-800 px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4'
+      ? 'surface-card flex flex-col gap-3 px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4'
       : 'flex items-center justify-between gap-3 px-3 py-2'
 
   return (
@@ -77,7 +77,7 @@ export default function SimulationControls({ variant = 'card' }: Props) {
         <button
           onClick={stepBackward}
           disabled={currentStep <= 0}
-          className="flex h-12 w-12 items-center justify-center rounded-lg text-gray-300 transition active:bg-gray-700 disabled:opacity-30 sm:h-11 sm:w-11"
+          className="flex h-12 w-12 items-center justify-center rounded-xl text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)] active:bg-[color:var(--surface-3)] disabled:cursor-not-allowed disabled:opacity-30 sm:h-11 sm:w-11"
           title="Paso anterior"
           aria-label="Paso anterior"
         >
@@ -85,7 +85,7 @@ export default function SimulationControls({ variant = 'card' }: Props) {
         </button>
         <button
           onClick={togglePlay}
-          className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-600 text-white transition active:scale-95 sm:h-11 sm:w-11"
+          className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-white to-[#E7E2FF] text-[#0A0A0A] shadow-[0_4px_12px_rgba(199,189,255,0.35)] transition active:scale-95 sm:h-11 sm:w-11"
           title={isPlaying ? 'Pausar' : 'Reproducir'}
           aria-label={isPlaying ? 'Pausar' : 'Reproducir'}
         >
@@ -94,7 +94,7 @@ export default function SimulationControls({ variant = 'card' }: Props) {
         <button
           onClick={stepForward}
           disabled={currentStep >= maxStep}
-          className="flex h-12 w-12 items-center justify-center rounded-lg text-gray-300 transition active:bg-gray-700 disabled:opacity-30 sm:h-11 sm:w-11"
+          className="flex h-12 w-12 items-center justify-center rounded-xl text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)] active:bg-[color:var(--surface-3)] disabled:cursor-not-allowed disabled:opacity-30 sm:h-11 sm:w-11"
           title="Paso siguiente"
           aria-label="Paso siguiente"
         >
@@ -102,8 +102,8 @@ export default function SimulationControls({ variant = 'card' }: Props) {
         </button>
       </div>
 
-      <div className="flex items-center gap-2 text-xs text-gray-400 sm:text-sm">
-        <Gauge size={14} />
+      <div className="flex items-center gap-2 text-[12px] text-[color:var(--text-muted)]">
+        <Gauge size={14} className="text-[color:var(--accent)]" />
         <input
           type="range"
           min={0.5}
@@ -111,20 +111,20 @@ export default function SimulationControls({ variant = 'card' }: Props) {
           step={0.5}
           value={speed}
           onChange={(e) => setSpeed(Number(e.target.value))}
-          className="h-2 w-24 cursor-pointer accent-indigo-500 sm:w-28"
+          className="h-2 w-24 cursor-pointer sm:w-28"
           aria-label="Velocidad de reproducción"
         />
-        <span className="w-9 text-gray-300">{speed}x</span>
+        <span className="w-10 font-mono tabular-nums text-[color:var(--text)]">{speed}x</span>
       </div>
 
-      <div className="flex items-center gap-2 text-xs text-gray-400 sm:ml-auto sm:text-sm">
-        <span>
-          T: <span className="font-mono font-semibold text-gray-100">{currentTime}</span>
+      <div className="flex items-center gap-3 text-[12px] text-[color:var(--text-muted)] sm:ml-auto">
+        <span className="font-mono uppercase tracking-[0.16em] text-[color:var(--text-faint)]">
+          T <span className="ml-1 font-mono font-semibold tabular-nums text-[color:var(--text)]">{currentTime}</span>
         </span>
-        <span className="text-gray-600">|</span>
-        <span>
-          <span className="font-mono font-semibold text-gray-100">{currentStep + 1}</span>
-          <span className="text-gray-500"> / {timeline.length}</span>
+        <span className="text-[color:var(--border-strong)]">/</span>
+        <span className="font-mono tabular-nums">
+          <span className="font-semibold text-[color:var(--text)]">{currentStep + 1}</span>
+          <span className="text-[color:var(--text-faint)]"> / {timeline.length}</span>
         </span>
       </div>
     </div>

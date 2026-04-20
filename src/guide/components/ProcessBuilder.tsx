@@ -15,13 +15,17 @@ export default function ProcessBuilder() {
 
   return (
     <div className="space-y-3">
-      <div className="rounded-xl border border-gray-700 bg-gray-900/70 p-4">
-        <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-200">
-          <ChefHat className="h-4 w-4 text-amber-400" />
-          Arma un nuevo encargo
+      <div className="surface-card p-4">
+        <div className="mb-4 flex items-center gap-2.5">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[color:var(--border-strong)] bg-[color:var(--surface-2)] text-amber-300">
+            <ChefHat className="h-4 w-4" />
+          </span>
+          <h3 className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
+            Arma un nuevo encargo
+          </h3>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           <BigSlider
             label="Tiempo de llegada"
             value={arrival}
@@ -46,19 +50,19 @@ export default function ProcessBuilder() {
           type="button"
           disabled={isFull}
           onClick={() => addMiniProcess({ arrivalTime: arrival, burstTime: burst })}
-          className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition active:scale-[0.98] hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
+          className="btn-primary mt-5 h-12 w-full"
         >
           <Plus size={18} />
           {isFull ? 'Máximo 5 procesos' : 'Agregar proceso'}
         </button>
       </div>
 
-      <div className="rounded-xl border border-gray-700 bg-gray-900/70 p-3">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+      <div className="surface-card p-3">
+        <p className="mb-2 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
           Tus procesos ({miniProcesses.length}/{max})
         </p>
         {miniProcesses.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-gray-700 px-3 py-6 text-center text-xs text-gray-500">
+          <p className="rounded-xl border border-dashed border-[color:var(--border)] px-3 py-6 text-center text-[12px] text-[color:var(--text-faint)]">
             Toca "Agregar proceso" para crear el primero.
           </p>
         ) : (
@@ -72,24 +76,30 @@ export default function ProcessBuilder() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 12 }}
                   transition={{ duration: 0.2 }}
-                  className="flex items-center gap-3 rounded-lg border border-gray-800 bg-gray-950/60 px-3 py-2"
+                  className="flex items-center gap-3 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-3 py-2"
                 >
                   <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-white"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-mono text-[12px] font-bold tabular-nums text-white shadow-[0_2px_6px_rgba(0,0,0,0.2)]"
                     style={{ backgroundColor: getProcessColor(p.pid) }}
                   >
                     P{p.pid}
                   </span>
-                  <div className="flex-1 text-xs text-gray-300">
+                  <div className="flex-1 text-[12px] text-[color:var(--text-muted)]">
                     <p>
-                      Llega en <strong className="text-gray-100">{p.arrivalTime}s</strong>,
-                      tarda <strong className="text-gray-100">{p.burstTime}s</strong>
+                      Llega en{' '}
+                      <strong className="font-mono tabular-nums text-[color:var(--text)]">
+                        {p.arrivalTime}s
+                      </strong>
+                      , tarda{' '}
+                      <strong className="font-mono tabular-nums text-[color:var(--text)]">
+                        {p.burstTime}s
+                      </strong>
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => removeMiniProcess(p.pid)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-rose-400 transition hover:bg-rose-500/10"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-rose-300 transition hover:bg-rose-300/10"
                     aria-label={`Quitar P${p.pid}`}
                   >
                     <Trash2 size={14} />

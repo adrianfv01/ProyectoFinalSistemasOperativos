@@ -23,10 +23,10 @@ export default function ProgressDots({
             aria-label={`Paso ${i + 1} de ${total}`}
             className={`h-1.5 rounded-full transition-all ${
               active
-                ? 'w-6 bg-indigo-400'
+                ? 'w-6 bg-[color:var(--accent)] shadow-[0_0_8px_var(--accent)]'
                 : done
-                ? 'w-1.5 bg-indigo-500/60'
-                : 'w-1.5 bg-gray-700'
+                  ? 'w-1.5 bg-[color:var(--accent)]/50'
+                  : 'w-1.5 bg-[color:var(--border-strong)]'
             } ${onPick ? 'cursor-pointer' : 'cursor-default'}`}
           />
         )

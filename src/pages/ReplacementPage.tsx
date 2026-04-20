@@ -14,15 +14,22 @@ export default function ReplacementPage() {
   const hitRatio = total > 0 ? ((total - faults) / total) * 100 : 0
 
   return (
-    <div className="space-y-4">
-      <h1 className="hidden text-xl font-bold text-gray-100 sm:text-2xl lg:block">
-        Reemplazo de páginas
-      </h1>
+    <div className="space-y-5">
+      <div className="hidden items-end justify-between lg:flex">
+        <div>
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
+            Módulo · Page Replacement
+          </span>
+          <h1 className="mt-1 text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
+            Reemplazo de páginas
+          </h1>
+        </div>
+      </div>
 
       <ReplacementAlgorithmSelector />
 
       {!hasSteps && (
-        <div className="rounded-xl border border-dashed border-gray-600 bg-gray-800/50 p-8 text-center text-sm text-gray-400">
+        <div className="surface-glass border-dashed p-8 text-center text-[13px] text-[color:var(--text-muted)]">
           Configura la memoria y ejecuta un algoritmo para ver la simulación.
         </div>
       )}
@@ -73,9 +80,13 @@ function SummaryCard({
   accent: string
 }) {
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-800 p-3 text-center sm:p-4 sm:text-left">
-      <p className="text-xs text-gray-400 sm:text-sm">{label}</p>
-      <p className={`mt-1 text-lg font-bold sm:text-2xl ${accent}`}>{value}</p>
+    <div className="surface-card p-3 text-center sm:p-4 sm:text-left">
+      <p className="text-[11px] text-[color:var(--text-muted)] sm:text-[12px]">
+        {label}
+      </p>
+      <p className={`mt-1 font-mono text-[18px] font-semibold tabular-nums sm:text-[24px] ${accent}`}>
+        {value}
+      </p>
     </div>
   )
 }

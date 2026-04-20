@@ -64,11 +64,20 @@ export default function MemoryPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="hidden text-xl font-bold text-gray-100 sm:text-2xl lg:block">Memoria</h1>
+      <div className="hidden items-end justify-between lg:flex">
+        <div>
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
+            Módulo · Memory
+          </span>
+          <h1 className="mt-1 text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
+            Memoria
+          </h1>
+        </div>
+      </div>
 
       {processes.length === 0 ? (
-        <div className="rounded-xl border border-gray-700 bg-gray-900 p-10 text-center">
-          <p className="text-gray-400">
+        <div className="surface-glass p-10 text-center">
+          <p className="text-[13px] text-[color:var(--text-muted)]">
             Primero agrega procesos en la pantalla de Captura.
           </p>
         </div>
@@ -76,20 +85,24 @@ export default function MemoryPage() {
         <>
           <button
             onClick={() => setConfigOpen(true)}
-            className="flex w-full items-center justify-between rounded-xl border border-gray-700 bg-gray-900 p-4 text-left transition active:bg-gray-800 lg:hidden"
+            className="surface-card flex w-full items-center justify-between p-4 text-left transition hover:border-[color:var(--accent)]/30 active:scale-[0.99] lg:hidden"
           >
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/15 text-indigo-400">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[color:var(--border-strong)] bg-[color:var(--surface-2)] text-[color:var(--accent)]">
                 <Settings size={18} />
               </span>
               <div>
-                <p className="text-sm font-semibold text-gray-100">Configurar memoria</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-[13.5px] font-semibold text-[color:var(--text)]">
+                  Configurar memoria
+                </p>
+                <p className="font-mono text-[11px] text-[color:var(--text-muted)]">
                   {totalMemory} KB · página {pageSize} KB · {numFrames} marcos
                 </p>
               </div>
             </div>
-            <span className="text-xs font-medium text-indigo-300">Editar</span>
+            <span className="text-[11px] font-semibold text-[color:var(--accent)]">
+              Editar
+            </span>
           </button>
 
           <div className="hidden lg:grid lg:grid-cols-[1fr_auto] lg:gap-5">
@@ -101,11 +114,15 @@ export default function MemoryPage() {
                   key={c.label}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex flex-col items-center justify-center rounded-xl border border-gray-700 bg-gray-900 px-4 py-4"
+                  className="surface-card flex flex-col items-center justify-center px-4 py-4"
                 >
                   <span className={c.accent}>{c.icon}</span>
-                  <span className={`mt-1 text-xl font-bold ${c.accent}`}>{c.value}</span>
-                  <span className="text-[11px] text-gray-500">{c.label}</span>
+                  <span className={`mt-1 font-mono text-[22px] font-semibold tabular-nums ${c.accent}`}>
+                    {c.value}
+                  </span>
+                  <span className="text-[11px] text-[color:var(--text-muted)]">
+                    {c.label}
+                  </span>
                 </motion.div>
               ))}
             </div>
@@ -117,20 +134,21 @@ export default function MemoryPage() {
                 key={c.label}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col items-center justify-center rounded-xl border border-gray-700 bg-gray-900 px-3 py-3 text-center"
+                className="surface-card flex flex-col items-center justify-center px-3 py-3 text-center"
               >
                 <span className={c.accent}>{c.icon}</span>
-                <span className={`mt-1 text-lg font-bold ${c.accent}`}>{c.value}</span>
-                <span className="text-[11px] text-gray-500">{c.label}</span>
+                <span className={`mt-1 font-mono text-[18px] font-semibold tabular-nums ${c.accent}`}>
+                  {c.value}
+                </span>
+                <span className="text-[11px] text-[color:var(--text-muted)]">
+                  {c.label}
+                </span>
               </motion.div>
             ))}
           </div>
 
           <div className="hidden lg:block">
-            <button
-              onClick={handleAllocate}
-              className="w-full rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500 sm:w-auto"
-            >
+            <button onClick={handleAllocate} className="btn-primary">
               Asignar páginas
             </button>
           </div>
@@ -140,10 +158,7 @@ export default function MemoryPage() {
           {memState && <PageTable pageTables={memState.pageTables} pids={pids} />}
 
           <StickyActionBar>
-            <button
-              onClick={handleAllocate}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 text-sm font-semibold text-white transition active:scale-[0.98]"
-            >
+            <button onClick={handleAllocate} className="btn-primary h-12 w-full">
               Asignar páginas
             </button>
           </StickyActionBar>

@@ -47,11 +47,11 @@ export default function BottomSheet({
         <>
           <motion.div
             key="backdrop"
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={{ duration: 0.18 }}
             onClick={onClose}
             aria-hidden
           />
@@ -61,7 +61,7 @@ export default function BottomSheet({
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            className="fixed inset-x-0 bottom-0 z-[70] flex flex-col rounded-t-3xl border-t border-gray-700 bg-gray-900 shadow-2xl"
+            className="fixed inset-x-0 bottom-0 z-[70] flex flex-col rounded-t-3xl border-t border-x border-[color:var(--border-strong)] bg-[color:var(--surface)] shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.6)]"
             style={{
               maxHeight,
               paddingBottom: 'env(safe-area-inset-bottom)',
@@ -76,15 +76,17 @@ export default function BottomSheet({
             onDragEnd={handleDragEnd}
           >
             <div className="flex shrink-0 cursor-grab justify-center pt-3 active:cursor-grabbing">
-              <span className="h-1.5 w-12 rounded-full bg-gray-600" aria-hidden />
+              <span className="h-1 w-10 rounded-full bg-[color:var(--border-strong)]" aria-hidden />
             </div>
 
             {title && (
               <div className="flex shrink-0 items-center justify-between px-5 pb-2 pt-3">
-                <h2 className="text-base font-semibold text-gray-100">{title}</h2>
+                <h2 className="text-[15px] font-semibold tracking-tight text-[color:var(--text)]">
+                  {title}
+                </h2>
                 <button
                   onClick={onClose}
-                  className="rounded-lg p-2 text-gray-400 transition hover:bg-gray-800 hover:text-gray-200"
+                  className="rounded-lg p-2 text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface-2)] hover:text-[color:var(--text)]"
                   aria-label="Cerrar"
                 >
                   <X size={18} />

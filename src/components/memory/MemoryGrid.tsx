@@ -9,15 +9,15 @@ interface Props {
 export default function MemoryGrid({ frames }: Props) {
   if (frames.length === 0) {
     return (
-      <div className="rounded-xl border border-gray-700 bg-gray-900 p-6 text-center text-sm text-gray-500">
+      <div className="surface-glass rounded-2xl border-dashed p-6 text-center text-[13px] text-[color:var(--text-muted)]">
         Sin marcos para mostrar. Configura la memoria y asigna páginas.
       </div>
     )
   }
 
   return (
-    <div className="rounded-xl border border-gray-700 bg-gray-900 p-5">
-      <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-300">
+    <div className="surface-card p-5">
+      <h3 className="mb-4 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
         Mapa de memoria
       </h3>
 
@@ -26,35 +26,37 @@ export default function MemoryGrid({ frames }: Props) {
           const occupied = frame.pid !== null
           const bg = occupied
             ? getProcessColorWithAlpha(frame.pid!, 0.18)
-            : undefined
+            : 'var(--surface-2)'
           const border = occupied
             ? getProcessColor(frame.pid!)
-            : '#374151'
+            : 'var(--border-strong)'
 
           return (
             <motion.div
               key={frame.frameNumber}
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.25, delay: idx * 0.012 }}
-              className="flex flex-col items-center justify-center rounded-lg border px-2 py-3 text-center"
+              className="flex flex-col items-center justify-center rounded-lg border px-2 py-3 text-center transition"
               style={{
-                backgroundColor: occupied ? bg : '#1f2937',
+                backgroundColor: bg,
                 borderColor: border,
               }}
             >
-              <span className="text-[10px] font-medium text-gray-500">
+              <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[color:var(--text-faint)]">
                 M{frame.frameNumber}
               </span>
               {occupied ? (
                 <span
-                  className="mt-0.5 text-xs font-bold"
+                  className="mt-0.5 font-mono text-[12px] font-bold tabular-nums"
                   style={{ color: getProcessColor(frame.pid!) }}
                 >
                   P{frame.pid}:Pg{frame.pageNumber}
                 </span>
               ) : (
-                <span className="mt-0.5 text-xs text-gray-600">Libre</span>
+                <span className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.14em] text-[color:var(--text-faint)]">
+                  Libre
+                </span>
               )}
             </motion.div>
           )
