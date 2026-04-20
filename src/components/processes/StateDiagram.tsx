@@ -34,15 +34,18 @@ const NODES_DESKTOP: NodeDef[] = [
   { id: ProcessState.Terminated, label: 'Terminado', x: 620, y: 130 },
 ]
 
+// Layout móvil: Running y Waiting comparten fila, Terminado abajo. Esto
+// evita que las etiquetas (E/S completada, Despachado, Interrumpido) caigan
+// encima de los nodos Listo y Ejecución.
 const NODES_MOBILE: NodeDef[] = [
-  { id: ProcessState.New, label: 'Nuevo', x: 170, y: 60 },
-  { id: ProcessState.Ready, label: 'Listo', x: 170, y: 180 },
-  { id: ProcessState.Running, label: 'Ejecución', x: 170, y: 320 },
-  { id: ProcessState.Waiting, label: 'Espera', x: 300, y: 460 },
-  { id: ProcessState.Terminated, label: 'Terminado', x: 170, y: 600 },
+  { id: ProcessState.New, label: 'Nuevo', x: 130, y: 50 },
+  { id: ProcessState.Ready, label: 'Listo', x: 130, y: 175 },
+  { id: ProcessState.Running, label: 'Ejecución', x: 130, y: 320 },
+  { id: ProcessState.Waiting, label: 'Espera', x: 290, y: 320 },
+  { id: ProcessState.Terminated, label: 'Terminado', x: 130, y: 470 },
 ]
 
-const EDGES: EdgeDef[] = [
+const EDGES_DESKTOP: EdgeDef[] = [
   { from: ProcessState.New, to: ProcessState.Ready, label: 'Admitido', labelGap: 14 },
   {
     from: ProcessState.Ready,
@@ -78,8 +81,47 @@ const EDGES: EdgeDef[] = [
   },
 ]
 
-const NODE_RX = 55
-const NODE_RY = 26
+const EDGES_MOBILE: EdgeDef[] = [
+  { from: ProcessState.New, to: ProcessState.Ready, label: 'Admitido', labelGap: 16 },
+  {
+    from: ProcessState.Ready,
+    to: ProcessState.Running,
+    label: 'Despachado',
+    curve: 52,
+    labelGap: 14,
+  },
+  {
+    from: ProcessState.Running,
+    to: ProcessState.Ready,
+    label: 'Interrumpido',
+    curve: 52,
+    labelGap: 14,
+  },
+  {
+    from: ProcessState.Running,
+    to: ProcessState.Waiting,
+    label: 'E/S solicitada',
+    labelGap: 20,
+  },
+  {
+    from: ProcessState.Running,
+    to: ProcessState.Terminated,
+    label: 'Finalizado',
+    labelGap: 16,
+  },
+  {
+    from: ProcessState.Waiting,
+    to: ProcessState.Ready,
+    label: 'E/S completada',
+    curve: -42,
+    labelGap: 14,
+  },
+]
+
+const NODE_RX_DESKTOP = 55
+const NODE_RY_DESKTOP = 26
+const NODE_RX_MOBILE = 50
+const NODE_RY_MOBILE = 23
 
 const SIM_SEQUENCE: ProcessState[] = [
   ProcessState.New,
@@ -94,9 +136,9 @@ const SIM_SEQUENCE: ProcessState[] = [
 const SPEEDS = [0.5, 1, 2] as const
 type Speed = (typeof SPEEDS)[number]
 
-function ellipseTrim(ux: number, uy: number): number {
-  const a = ux / NODE_RX
-  const b = uy / NODE_RY
+function ellipseTrim(ux: number, uy: number, rx: number, ry: number): number {
+  const a = ux / rx
+  const b = uy / ry
   return 1 / Math.sqrt(a * a + b * b)
 }
 
@@ -105,6 +147,8 @@ function computeEdgePath(
   to: NodeDef,
   curve: number,
   labelGap: number,
+  rx: number,
+  ry: number,
 ): { path: string; labelX: number; labelY: number } {
   const dx = to.x - from.x
   const dy = to.y - from.y
@@ -112,7 +156,7 @@ function computeEdgePath(
   const ux = dx / dist
   const uy = dy / dist
 
-  const trim = ellipseTrim(ux, uy)
+  const trim = ellipseTrim(ux, uy, rx, ry)
   const x1 = from.x + ux * trim
   const y1 = from.y + uy * trim
   const x2 = to.x - ux * trim
@@ -202,9 +246,12 @@ export default function StateDiagram({ selectedPid }: Props) {
   }
 
   const nodes = isMobile ? NODES_MOBILE : NODES_DESKTOP
-  const viewBox = isMobile ? '0 0 360 670' : '0 0 700 380'
-  const labelClass = isMobile ? 'text-[12px] font-medium' : 'text-[11px] font-medium'
-  const nodeLabelClass = isMobile ? 'text-[14px] font-semibold' : 'text-[13px] font-semibold'
+  const edges = isMobile ? EDGES_MOBILE : EDGES_DESKTOP
+  const viewBox = isMobile ? '0 0 380 540' : '0 0 700 380'
+  const NODE_RX = isMobile ? NODE_RX_MOBILE : NODE_RX_DESKTOP
+  const NODE_RY = isMobile ? NODE_RY_MOBILE : NODE_RY_DESKTOP
+  const labelClass = isMobile ? 'text-[11px] font-semibold' : 'text-[11px] font-medium'
+  const nodeLabelClass = isMobile ? 'text-[13px] font-semibold' : 'text-[13px] font-semibold'
   const getNode = (id: ProcessState) => nodes.find((n) => n.id === id)!
 
   const transitionCaption = useMemo(() => {
@@ -295,7 +342,7 @@ export default function StateDiagram({ selectedPid }: Props) {
           </marker>
         </defs>
 
-        {EDGES.map((edge) => {
+        {edges.map((edge) => {
           const from = getNode(edge.from)
           const to = getNode(edge.to)
           const { path, labelX, labelY } = computeEdgePath(
@@ -303,6 +350,8 @@ export default function StateDiagram({ selectedPid }: Props) {
             to,
             edge.curve ?? 0,
             edge.labelGap ?? 14,
+            NODE_RX,
+            NODE_RY,
           )
           const isOnPath =
             !isSimulating &&

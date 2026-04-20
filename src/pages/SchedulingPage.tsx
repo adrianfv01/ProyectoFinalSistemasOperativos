@@ -11,7 +11,7 @@ export default function SchedulingPage() {
   const result = useSchedulingStore((s) => s.result)
 
   return (
-    <div className="space-y-5">
+    <div className={`space-y-5 ${result ? 'pb-28 lg:pb-0' : ''}`}>
       <div className="hidden items-end justify-between lg:flex">
         <div>
           <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">

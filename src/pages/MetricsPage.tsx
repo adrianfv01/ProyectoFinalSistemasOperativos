@@ -40,17 +40,19 @@ function SummaryCard({
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="surface-card p-3 sm:p-5"
+      className="surface-card p-3.5 sm:p-5"
     >
-      <div className="flex items-center gap-3">
-        <div className={`rounded-lg border border-[color:var(--border-strong)] p-2 ${accent}`}>
-          <Icon className="h-5 w-5" />
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3">
+        <div
+          className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[color:var(--border-strong)] sm:h-auto sm:w-auto sm:p-2 ${accent}`}
+        >
+          <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
         </div>
         <div className="min-w-0">
-          <p className="truncate text-[11px] text-[color:var(--text-muted)] sm:text-[12px]">
+          <p className="text-[11px] leading-tight text-[color:var(--text-muted)] sm:truncate sm:text-[12px]">
             {label}
           </p>
-          <p className="font-mono text-[18px] font-semibold tabular-nums text-[color:var(--text)] sm:text-[22px]">
+          <p className="mt-0.5 font-mono text-[20px] font-semibold tabular-nums leading-none text-[color:var(--text)] sm:text-[22px]">
             {value}
           </p>
         </div>
@@ -74,8 +76,36 @@ function MetricKV({ label, value }: { label: string; value: string | number }) {
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="surface-glass flex items-center justify-center border-dashed py-12">
+    <div className="surface-glass flex items-center justify-center border-dashed px-4 py-10 text-center sm:py-12">
       <p className="text-[13px] text-[color:var(--text-muted)]">{message}</p>
+    </div>
+  )
+}
+
+function SectionHeader({
+  eyebrow,
+  title,
+  subtitle,
+}: {
+  eyebrow: string
+  title: string
+  subtitle?: string
+}) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
+        {eyebrow}
+      </span>
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <h2 className="text-[16px] font-semibold tracking-tight text-[color:var(--text)] sm:text-[17px]">
+          {title}
+        </h2>
+        {subtitle && (
+          <span className="font-mono text-[11px] text-[color:var(--text-muted)] sm:text-[12px]">
+            {subtitle}
+          </span>
+        )}
+      </div>
     </div>
   )
 }
@@ -165,12 +195,11 @@ export default function MetricsPage() {
 
       {/* ── Scheduling metrics ── */}
       <section className="space-y-4">
-        <h2 className="text-[17px] font-semibold tracking-tight text-[color:var(--text)]">
-          Métricas de Planificación
-          <span className="ml-2 font-mono text-[12px] font-normal text-[color:var(--text-muted)]">
-            ({ALGORITHM_LABELS[selectedAlgorithm]})
-          </span>
-        </h2>
+        <SectionHeader
+          eyebrow="Planificación"
+          title="Métricas por proceso"
+          subtitle={`(${ALGORITHM_LABELS[selectedAlgorithm]})`}
+        />
 
         {!result ? (
           <EmptyState message="Ejecuta un algoritmo de planificación primero" />
@@ -269,12 +298,11 @@ export default function MetricsPage() {
 
       {/* ── Memory metrics ── */}
       <section className="space-y-4">
-        <h2 className="text-[17px] font-semibold tracking-tight text-[color:var(--text)]">
-          Métricas de Memoria
-          <span className="ml-2 font-mono text-[12px] font-normal text-[color:var(--text-muted)]">
-            ({REPLACEMENT_LABELS[replacementAlgo]})
-          </span>
-        </h2>
+        <SectionHeader
+          eyebrow="Memoria"
+          title="Reemplazo de páginas"
+          subtitle={`(${REPLACEMENT_LABELS[replacementAlgo]})`}
+        />
 
         {replacementSteps.length === 0 ? (
           <EmptyState message="Ejecuta un algoritmo de reemplazo primero" />
@@ -367,10 +395,8 @@ export default function MetricsPage() {
       {/* ── Per-process breakdown ── */}
       {processes.length > 0 && (
         <section className="space-y-4">
-          <h2 className="text-[17px] font-semibold tracking-tight text-[color:var(--text)]">
-            Desglose por Proceso
-          </h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <SectionHeader eyebrow="Procesos" title="Desglose individual" />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {processes.map((proc) => {
               const sched = processMetricsMap.get(proc.pid)
               return (
@@ -378,25 +404,25 @@ export default function MetricsPage() {
                   key={proc.pid}
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="surface-card p-4"
+                  className="surface-card p-3 sm:p-4"
                 >
-                  <div className="mb-3 flex items-center gap-2">
+                  <div className="mb-2.5 flex items-center gap-2 sm:mb-3">
                     <span
-                      className="inline-block h-2.5 w-2.5 rounded-full"
+                      className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
                       style={{ backgroundColor: getProcessColor(proc.pid) }}
                     />
-                    <span className="font-mono text-[13px] font-semibold text-[color:var(--text)]">
+                    <span className="font-mono text-[12px] font-semibold text-[color:var(--text)] sm:text-[13px]">
                       PID {proc.pid}
                     </span>
                   </div>
-                  <div className="space-y-1 text-[13px] text-[color:var(--text-muted)]">
-                    <div className="flex justify-between">
+                  <div className="space-y-1 text-[12px] text-[color:var(--text-muted)] sm:text-[13px]">
+                    <div className="flex justify-between gap-2">
                       <span>Ráfaga</span>
                       <span className="font-mono tabular-nums text-[color:var(--text)]">
                         {proc.burstTime}
                       </span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-2">
                       <span>Páginas</span>
                       <span className="font-mono tabular-nums text-[color:var(--text)]">
                         {proc.numPages}
@@ -404,13 +430,13 @@ export default function MetricsPage() {
                     </div>
                     {sched && (
                       <>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between gap-2">
                           <span>T. Retorno</span>
                           <span className="font-mono tabular-nums text-[color:var(--text)]">
                             {sched.turnaround}
                           </span>
                         </div>
-                        <div className="flex justify-between">
+                        <div className="flex justify-between gap-2">
                           <span>T. Espera</span>
                           <span className="font-mono tabular-nums text-[color:var(--text)]">
                             {sched.waiting}
