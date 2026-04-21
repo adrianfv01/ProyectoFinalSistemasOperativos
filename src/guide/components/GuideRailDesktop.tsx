@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import { CheckCircle2, Circle, Dot, GraduationCap, LogOut } from 'lucide-react'
 import { COMMON } from '../copy'
 import type { GuideChapterDefinition } from '../types'
@@ -9,6 +8,7 @@ interface GuideRailDesktopProps {
   currentStepIndex: number
   completedChapterIds: string[]
   onJumpTo: (chapterSlug: string, stepIndex: number) => void
+  onExitRequest: () => void
 }
 
 export default function GuideRailDesktop({
@@ -17,18 +17,11 @@ export default function GuideRailDesktop({
   currentStepIndex,
   completedChapterIds,
   onJumpTo,
+  onExitRequest,
 }: GuideRailDesktopProps) {
-  const navigate = useNavigate()
-
   const currentChapterIndex = chapters.findIndex(
     (c) => c.id === currentChapterId,
   )
-
-  function handleExit() {
-    if (window.confirm(COMMON.exitConfirm)) {
-      navigate('/')
-    }
-  }
 
   return (
     <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r border-[color:var(--border)] bg-[color:var(--bg-soft)]/85 backdrop-blur-xl lg:flex">
@@ -146,7 +139,7 @@ export default function GuideRailDesktop({
       <div className="border-t border-[color:var(--border)] px-3 py-3">
         <button
           type="button"
-          onClick={handleExit}
+          onClick={onExitRequest}
           className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-[12px] font-medium text-[color:var(--text-muted)] transition hover:bg-[color:var(--surface)] hover:text-[color:var(--text)]"
         >
           <LogOut size={14} />

@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { motion } from 'framer-motion'
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { COMMON } from './copy'
 import type { GuideChapterDefinition } from './types'
 import GuideRailDesktop from './components/GuideRailDesktop'
 import ThemeToggle from '../components/ui/ThemeToggle'
+import AboutButton from '../components/ui/AboutButton'
+import Modal from '../components/ui/Modal'
 
 interface GuideShellProps {
   chapters: GuideChapterDefinition[]
@@ -47,14 +49,18 @@ export default function GuideShell({
   children,
 }: GuideShellProps) {
   const navigate = useNavigate()
+  const [showExitModal, setShowExitModal] = useState(false)
 
   const overallProgress =
     ((chapterIndex + (stepIndex + 1) / totalSteps) / totalChapters) * 100
 
   const exit = () => {
-    if (window.confirm(COMMON.exitConfirm)) {
-      navigate('/')
-    }
+    setShowExitModal(true)
+  }
+
+  const confirmExit = () => {
+    setShowExitModal(false)
+    navigate('/')
   }
 
   return (
@@ -90,6 +96,7 @@ export default function GuideShell({
               <span className="font-mono text-[11px] tabular-nums text-[color:var(--text-faint)]">
                 {stepIndex + 1}/{totalSteps}
               </span>
+              <AboutButton />
               <ThemeToggle />
             </div>
           </div>
@@ -149,6 +156,7 @@ export default function GuideShell({
           currentStepIndex={currentStepIndex}
           completedChapterIds={completedChapterIds}
           onJumpTo={onJumpTo}
+          onExitRequest={exit}
         />
 
         <div className="flex min-h-[100dvh] flex-1 flex-col lg:ml-64">
@@ -167,6 +175,7 @@ export default function GuideShell({
                 <span className="font-mono text-[11px] tabular-nums text-[color:var(--text-faint)]">
                   Paso {stepIndex + 1} de {totalSteps}
                 </span>
+                <AboutButton />
                 <ThemeToggle size="regular" />
                 <button
                   type="button"
@@ -227,6 +236,31 @@ export default function GuideShell({
           </footer>
         </div>
       </div>
+
+      <Modal
+        open={showExitModal}
+        onClose={() => setShowExitModal(false)}
+        title="Salir de la guía"
+        description={COMMON.exitConfirm}
+        actions={
+          <>
+            <button
+              type="button"
+              className="btn-ghost flex-1 px-4 py-2 sm:flex-none"
+              onClick={() => setShowExitModal(false)}
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              className="btn-primary flex-1 px-4 py-2 sm:flex-none"
+              onClick={confirmExit}
+            >
+              Salir
+            </button>
+          </>
+        }
+      />
     </div>
   )
 }

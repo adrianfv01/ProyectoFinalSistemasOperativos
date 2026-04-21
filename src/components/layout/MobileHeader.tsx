@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { GraduationCap, HardDrive } from 'lucide-react'
 import { getRouteByPath } from './routesConfig'
 import ThemeToggle from '../ui/ThemeToggle'
+import AboutButton from '../ui/AboutButton'
 
 export default function MobileHeader() {
   const location = useLocation()
@@ -23,6 +24,7 @@ export default function MobileHeader() {
       </div>
 
       <div className="flex items-center gap-2">
+        <AboutButton />
         <ThemeToggle />
         <Link
           to="/guia"

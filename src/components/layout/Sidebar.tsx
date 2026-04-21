@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { HardDrive, GraduationCap, Sun, Moon, Sparkles } from 'lucide-react'
 import { useThemeStore } from '../../store/themeStore'
 import { FREE_MODE_ROUTES } from './routesConfig'
+import AboutButton from '../ui/AboutButton'
 
 export default function Sidebar() {
   const dark = useThemeStore((s) => s.dark)
@@ -80,7 +81,7 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-[color:var(--border)] px-3 py-3">
+      <div className="space-y-1 border-t border-[color:var(--border)] px-3 py-3">
         <button
           type="button"
           onClick={toggle}
@@ -90,6 +91,7 @@ export default function Sidebar() {
           {dark ? <Sun size={14} /> : <Moon size={14} />}
           <span>{dark ? 'Tema claro' : 'Tema oscuro'}</span>
         </button>
+        <AboutButton variant="inline" />
       </div>
     </aside>
   )

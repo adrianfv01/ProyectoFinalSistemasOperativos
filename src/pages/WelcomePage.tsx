@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { useTutorialStore } from '../store/tutorialStore'
 import ThemeToggle from '../components/ui/ThemeToggle'
+import AboutButton from '../components/ui/AboutButton'
 
 const HIGHLIGHTS = [
   {
@@ -60,7 +61,9 @@ export default function WelcomePage() {
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2"
           >
+            <AboutButton />
             <ThemeToggle />
           </motion.div>
         </div>

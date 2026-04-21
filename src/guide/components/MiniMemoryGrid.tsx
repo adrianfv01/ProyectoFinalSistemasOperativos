@@ -58,7 +58,7 @@ export default function MiniMemoryGrid({
                   style={{ backgroundColor: getProcessColor(f.pid as number) }}
                 >
                   <span>P{f.pid}</span>
-                  <span className="text-[9px] opacity-80">pag {f.pageNumber}</span>
+                  <span className="text-[9px] opacity-80">pág. {f.pageNumber}</span>
                 </motion.div>
               )}
             </motion.div>

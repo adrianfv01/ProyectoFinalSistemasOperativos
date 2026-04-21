@@ -10,7 +10,7 @@ import Modal from '../ui/Modal'
 const STATE_LABELS: Record<ProcessState, string> = {
   new: 'Nuevo',
   ready: 'Listo',
-  running: 'Ejecuci?n',
+  running: 'Ejecución',
   waiting: 'Espera',
   terminated: 'Terminado',
 }
@@ -137,13 +137,13 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                       Llegada: <span className="font-mono tabular-nums text-[color:var(--text)]">{p.arrivalTime}</span>
                     </span>
                     <span>
-                      R?faga:                       <span className="font-mono tabular-nums text-[color:var(--text)]">{p.burstTime}</span>
+                      Ráfaga: <span className="font-mono tabular-nums text-[color:var(--text)]">{p.burstTime}</span>
                     </span>
                     <span>
                       Prio.: <span className="font-mono tabular-nums text-[color:var(--text)]">{p.priority}</span>
                     </span>
                     <span>
-                      P?gs.: <span className="font-mono tabular-nums text-[color:var(--text)]">{p.numPages}</span>
+                      Págs.: <span className="font-mono tabular-nums text-[color:var(--text)]">{p.numPages}</span>
                     </span>
                   </div>
                 </div>
@@ -165,7 +165,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
 
         {processes.length === 0 && (
           <div className="surface-glass rounded-2xl border-dashed px-4 py-10 text-center text-[13px] text-[color:var(--text-muted)]">
-            A?n no agregas procesos. Toca el bot?n de la esquina inferior para crear uno.
+            Aún no agregas procesos. Toca el botón de la esquina inferior para crear uno.
           </div>
         )}
       </div>
@@ -177,9 +177,9 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
               <tr className="border-b border-[color:var(--border)] bg-[color:var(--surface-2)] font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[color:var(--text-muted)]">
                 <th className="px-3 py-3">PID</th>
                 <th className="px-3 py-3">Llegada</th>
-                <th className="px-3 py-3">R?faga</th>
+                <th className="px-3 py-3">Ráfaga</th>
                 <th className="px-3 py-3">Prioridad</th>
-                <th className="px-3 py-3">P?ginas</th>
+                <th className="px-3 py-3">Páginas</th>
                 <th className="px-3 py-3">Estado</th>
                 <th className="px-3 py-3">Hilos</th>
                 <th className="px-3 py-3 text-right">Acciones</th>
@@ -407,7 +407,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
           <div className="grid gap-2">
             <SheetAction
               icon={<Pencil size={18} />}
-              label="Editar par?metros"
+              label="Editar parámetros"
               onClick={() => startEdit(actionsProcess)}
               accent="text-[color:var(--accent)]"
             />
@@ -454,7 +454,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                 onChange={(v) => setEditing({ ...editing, arrivalTime: v })}
               />
               <NumberField
-                label="R?faga"
+                label="Ráfaga"
                 value={editing.burstTime}
                 min={1}
                 onChange={(v) => setEditing({ ...editing, burstTime: v })}
@@ -466,7 +466,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
                 onChange={(v) => setEditing({ ...editing, priority: v })}
               />
               <NumberField
-                label="P?ginas"
+                label="Páginas"
                 value={editing.numPages}
                 min={0}
                 onChange={(v) => setEditing({ ...editing, numPages: v })}
@@ -493,7 +493,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
       >
         <div className="space-y-4">
           <label className="block">
-            <span className="mb-1.5 block text-[12px] font-medium text-[color:var(--text-muted)]">Tiempo de r?faga del hilo</span>
+            <span className="mb-1.5 block text-[12px] font-medium text-[color:var(--text-muted)]">Tiempo de ráfaga del hilo</span>
             <input
               type="number"
               inputMode="numeric"
@@ -523,7 +523,7 @@ export default function ProcessTable({ selectedPid, onSelectPid }: Props) {
         title="Eliminar proceso"
         description={
           confirmDelete !== null
-            ? `Se eliminar? P${confirmDelete} junto con sus hilos. Esta acci?n no se puede deshacer.`
+            ? `Se eliminará P${confirmDelete} junto con sus hilos. Esta acción no se puede deshacer.`
             : ''
         }
         actions={
