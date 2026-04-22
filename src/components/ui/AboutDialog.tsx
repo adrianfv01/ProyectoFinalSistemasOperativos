@@ -111,7 +111,7 @@ export default function AboutDialog({ open, onClose }: AboutDialogProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.18 }}
+            transition={{ duration: 0.14, ease: 'easeOut' }}
             onClick={onClose}
             aria-hidden
           />
@@ -121,13 +121,16 @@ export default function AboutDialog({ open, onClose }: AboutDialogProps) {
               role="dialog"
               aria-modal="true"
               aria-labelledby="about-title"
-              initial={{ y: 32, opacity: 0, scale: 0.98 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 24, opacity: 0, scale: 0.98 }}
-              transition={{ type: 'spring', damping: 30, stiffness: 360 }}
+              initial={{ y: 24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 16, opacity: 0 }}
+              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
               className="surface-card relative flex max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden rounded-t-3xl rounded-b-none p-0 sm:rounded-3xl"
               onClick={(e) => e.stopPropagation()}
-              style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+              style={{
+                paddingBottom: 'env(safe-area-inset-bottom)',
+                willChange: 'transform, opacity',
+              }}
             >
               <div className="relative shrink-0 overflow-hidden border-b border-[color:var(--border)] px-5 pb-4 pt-5 sm:px-7 sm:pt-6">
                 <span
@@ -286,22 +289,27 @@ export default function AboutDialog({ open, onClose }: AboutDialogProps) {
                     href={REPO_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group mt-2 flex items-center justify-between gap-3 rounded-xl border border-[color:var(--border-strong)] bg-[color:var(--surface)] px-3.5 py-3 transition hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--surface-2)]"
+                    className="group mt-2 flex flex-col gap-3 rounded-xl border border-[color:var(--border-strong)] bg-[color:var(--surface)] px-4 py-4 transition hover:border-[color:var(--accent)]/50 hover:bg-[color:var(--surface-2)] sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-3.5 sm:py-3"
                   >
-                    <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex min-w-0 items-start gap-3 sm:items-center">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-2)]">
                         <GithubIcon className="h-4 w-4 text-[color:var(--text)]" />
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-[12.5px] font-semibold text-[color:var(--text)]">
+                      <div className="min-w-0 flex-1">
+                        <p className="break-all text-[12.5px] font-semibold leading-snug text-[color:var(--text)] sm:break-normal">
                           AdrianFV725/ProyectoFinalSistemasOperativos
                         </p>
-                        <p className="truncate text-[11.5px] text-[color:var(--text-muted)]">
+                        <p className="mt-1 text-[11.5px] leading-relaxed text-[color:var(--text-muted)] sm:mt-0.5 sm:truncate sm:leading-snug">
                           Código fuente, README extendido y guía de despliegue
                         </p>
                       </div>
                     </div>
-                    <ExternalLink className="h-4 w-4 shrink-0 text-[color:var(--text-faint)] transition group-hover:text-[color:var(--accent)]" />
+                    <span className="flex items-center justify-between gap-2 border-t border-[color:var(--border)] pt-3 sm:border-0 sm:pt-0">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[color:var(--text-faint)] sm:hidden">
+                        Abrir en GitHub
+                      </span>
+                      <ExternalLink className="h-4 w-4 shrink-0 text-[color:var(--text-faint)] transition group-hover:text-[color:var(--accent)]" />
+                    </span>
                   </a>
                 </section>
               </div>
