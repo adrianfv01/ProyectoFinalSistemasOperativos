@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { HardDrive, GraduationCap, Sun, Moon, Sparkles } from 'lucide-react'
+import { HardDrive, GraduationCap, Sun, Moon, Sparkles, FlaskConical } from 'lucide-react'
 import { useThemeStore } from '../../store/themeStore'
 import { FREE_MODE_ROUTES } from './routesConfig'
 import AboutButton from '../ui/AboutButton'
@@ -79,6 +79,25 @@ export default function Sidebar() {
             )}
           </NavLink>
         ))}
+
+        <div className="mt-4 border-t border-[color:var(--border)] pt-3">
+          <NavLink
+            to="/demos"
+            className={({ isActive }) =>
+              `group relative flex items-center gap-3 rounded-xl border px-3 py-2.5 text-[13px] font-semibold transition-all ${
+                isActive
+                  ? 'border-[color:var(--accent)]/50 bg-[color:var(--accent-soft)] text-[color:var(--text)]'
+                  : 'border-[color:var(--border-strong)] bg-[color:var(--surface)] text-[color:var(--text)] hover:border-[color:var(--accent)]/40'
+              }`
+            }
+          >
+            <FlaskConical className="h-4 w-4 shrink-0 text-[color:var(--accent)]" />
+            <span className="flex-1">Datos precargados</span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-[color:var(--text-faint)]">
+              Demos
+            </span>
+          </NavLink>
+        </div>
       </nav>
 
       <div className="space-y-1 border-t border-[color:var(--border)] px-3 py-3">

@@ -6,6 +6,10 @@ export function resetTidCounter() {
   nextTid = 1
 }
 
+export function setNextTid(value: number) {
+  nextTid = Math.max(1, value)
+}
+
 export function createThread(process: Process, burstTime: number): Thread {
   const tid = nextTid++
   const sharedPages = Array.from({ length: process.numPages }, (_, i) => i)

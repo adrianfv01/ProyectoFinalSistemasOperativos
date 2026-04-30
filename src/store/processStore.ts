@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { Process, Thread, ProcessState } from '../engine/processes/types'
-import { createThread, forkProcess, resetTidCounter } from '../engine/processes/threadManager'
+import { createThread, forkProcess, resetTidCounter, setNextTid } from '../engine/processes/threadManager'
 
 interface ProcessStore {
   processes: Process[]
@@ -85,8 +85,16 @@ export const useProcessStore = create<ProcessStore>((set, get) => ({
   },
 
   setProcesses: (processes) => {
-    resetTidCounter()
     const maxPid = processes.reduce((max, p) => Math.max(max, p.pid), 0)
+    const maxTid = processes.reduce(
+      (max, p) => p.threads.reduce((m, t) => Math.max(m, t.tid), max),
+      0,
+    )
+    if (maxTid > 0) {
+      setNextTid(maxTid + 1)
+    } else {
+      resetTidCounter()
+    }
     set({ processes, nextPid: maxPid + 1 })
   },
 

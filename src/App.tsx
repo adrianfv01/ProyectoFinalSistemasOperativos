@@ -8,6 +8,7 @@ import MemoryPage from './pages/MemoryPage'
 import ReplacementPage from './pages/ReplacementPage'
 import MetricsPage from './pages/MetricsPage'
 import ComparisonPage from './pages/ComparisonPage'
+import DemosPage from './pages/DemosPage'
 import WelcomePage from './pages/WelcomePage'
 import GuideRouter from './guide/GuideRouter'
 import { getRouteIndex } from './components/layout/routesConfig'
@@ -131,6 +132,14 @@ export default function App() {
           element={
             <ShellRoute direction={direction} mobile={isMobile}>
               <ComparisonPage />
+            </ShellRoute>
+          }
+        />
+        <Route
+          path="/demos"
+          element={
+            <ShellRoute direction={direction} mobile={isMobile}>
+              <DemosPage />
             </ShellRoute>
           }
         />

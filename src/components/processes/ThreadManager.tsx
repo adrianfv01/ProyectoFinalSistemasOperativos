@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion'
 import { Plus, Cpu, Trash2 } from 'lucide-react'
 import { useProcessStore } from '../../store/processStore'
-import { getProcessColor } from '../../utils/colors'
+import { getProcessColor, getProcessColorWithAlpha } from '../../utils/colors'
 import { useIsMobile } from '../../utils/useIsMobile'
 import type { ProcessState } from '../../engine/processes/types'
 
@@ -26,9 +26,17 @@ export default function ThreadManager({ selectedPid }: Props) {
 
   const [burstInput, setBurstInput] = useState('')
   const [showForm, setShowForm] = useState(false)
+  const [hoveredTid, setHoveredTid] = useState<number | null>(null)
 
   const process = processes.find((p) => p.pid === selectedPid) ?? processes[0]
   const color = process ? getProcessColor(process.pid) : '#6366f1'
+  const highlightedPages = process
+    ? hoveredTid != null
+      ? new Set(
+          process.threads.find((t) => t.tid === hoveredTid)?.sharedPages ?? [],
+        )
+      : null
+    : null
 
   function handleAdd() {
     if (!process) return
@@ -59,6 +67,47 @@ export default function ThreadManager({ selectedPid }: Props) {
         </p>
       ) : (
         <>
+          {process.numPages > 0 && (
+            <div className="mb-3 rounded-lg border border-gray-700 bg-gray-800/60 p-2.5">
+              <div className="mb-1.5 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-gray-400">
+                <span>Memoria del proceso</span>
+                <span>
+                  {process.numPages} {process.numPages === 1 ? 'página' : 'páginas'}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {Array.from({ length: process.numPages }, (_, i) => {
+                  const isHighlighted = highlightedPages?.has(i)
+                  const isDimmed =
+                    highlightedPages != null && !isHighlighted
+                  return (
+                    <motion.span
+                      key={i}
+                      animate={{
+                        backgroundColor: isHighlighted
+                          ? color
+                          : isDimmed
+                          ? getProcessColorWithAlpha(process.pid, 0.12)
+                          : getProcessColorWithAlpha(process.pid, 0.35),
+                        scale: isHighlighted ? 1.08 : 1,
+                      }}
+                      transition={{ duration: 0.15 }}
+                      className="flex h-6 w-6 items-center justify-center rounded-md font-mono text-[10px] font-semibold text-white"
+                      title={`Página ${i}`}
+                    >
+                      {i}
+                    </motion.span>
+                  )
+                })}
+              </div>
+              <p className="mt-1.5 text-[10px] leading-tight text-gray-500">
+                {hoveredTid != null
+                  ? `El hilo TID ${hoveredTid} accede a las páginas resaltadas (memoria compartida con el proceso).`
+                  : 'Pasa el cursor sobre un hilo para ver qué páginas comparte.'}
+              </p>
+            </div>
+          )}
+
           <AnimatePresence initial={false}>
             {process.threads.length === 0 && (
               <motion.p
@@ -79,6 +128,10 @@ export default function ThreadManager({ selectedPid }: Props) {
                 stateLabel={STATE_LABELS[t.state]}
                 isMobile={isMobile}
                 onRemove={() => removeThread(process.pid, t.tid)}
+                onHover={(hovered) => {
+                  if (hovered) setHoveredTid(t.tid)
+                  else setHoveredTid((prev) => (prev === t.tid ? null : prev))
+                }}
               />
             ))}
           </AnimatePresence>
@@ -137,6 +190,7 @@ interface ThreadRowProps {
   stateLabel: string
   isMobile: boolean
   onRemove: () => void
+  onHover?: (hovered: boolean) => void
 }
 
 function ThreadRow({
@@ -146,6 +200,7 @@ function ThreadRow({
   stateLabel,
   isMobile,
   onRemove,
+  onHover,
 }: ThreadRowProps) {
   const [dragX, setDragX] = useState(0)
 
@@ -165,6 +220,10 @@ function ThreadRow({
       transition={{ duration: 0.18 }}
       className="relative mb-2 overflow-hidden rounded-lg"
       data-no-swipe
+      onMouseEnter={() => onHover?.(true)}
+      onMouseLeave={() => onHover?.(false)}
+      onFocus={() => onHover?.(true)}
+      onBlur={() => onHover?.(false)}
     >
       {isMobile && (
         <div

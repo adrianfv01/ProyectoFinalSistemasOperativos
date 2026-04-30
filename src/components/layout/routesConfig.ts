@@ -5,6 +5,7 @@ import {
   RefreshCw,
   BarChart3,
   GitCompareArrows,
+  FlaskConical,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -24,10 +25,19 @@ export const FREE_MODE_ROUTES: FreeModeRoute[] = [
   { to: '/comparacion', label: 'Comparación', shortLabel: 'Compar.', icon: GitCompareArrows },
 ]
 
+export const DEMOS_ROUTE: FreeModeRoute = {
+  to: '/demos',
+  label: 'Demos',
+  shortLabel: 'Demos',
+  icon: FlaskConical,
+}
+
+const ALL_ROUTES: FreeModeRoute[] = [...FREE_MODE_ROUTES, DEMOS_ROUTE]
+
 export function getRouteIndex(pathname: string): number {
   return FREE_MODE_ROUTES.findIndex((r) => pathname.startsWith(r.to))
 }
 
 export function getRouteByPath(pathname: string): FreeModeRoute | undefined {
-  return FREE_MODE_ROUTES.find((r) => pathname.startsWith(r.to))
+  return ALL_ROUTES.find((r) => pathname.startsWith(r.to))
 }

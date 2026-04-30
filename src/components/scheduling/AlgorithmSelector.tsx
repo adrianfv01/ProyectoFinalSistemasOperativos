@@ -3,6 +3,7 @@ import { useProcessStore } from '../../store/processStore'
 import { getScheduler } from '../../engine/scheduling/index'
 import { Play, RotateCcw } from 'lucide-react'
 import Stepper from '../ui/Stepper'
+import CoreConfig from './CoreConfig'
 
 const ALGORITHMS = Object.keys(ALGORITHM_LABELS) as AlgorithmName[]
 
@@ -76,6 +77,10 @@ export default function AlgorithmSelector() {
             ))}
           </div>
         )}
+
+        <div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-3">
+          <CoreConfig />
+        </div>
 
         <div className="flex gap-2 pt-1">
           <button onClick={handleRun} disabled={noProcesses} className="btn-primary h-12 flex-1 sm:h-11">

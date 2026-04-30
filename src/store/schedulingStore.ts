@@ -40,7 +40,7 @@ interface SchedulingStore {
 
 export const useSchedulingStore = create<SchedulingStore>((set) => ({
   selectedAlgorithm: 'fcfs',
-  config: { quantum: 2, quantumPerLevel: [2, 4, 8] },
+  config: { quantum: 2, quantumPerLevel: [2, 4, 8], numCores: 1, parallelism: 'real' },
   result: null,
   currentStep: 0,
   isPlaying: false,

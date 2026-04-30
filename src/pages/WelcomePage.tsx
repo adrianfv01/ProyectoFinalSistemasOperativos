@@ -10,6 +10,7 @@ import {
   PlayCircle,
   Settings2,
   Sparkles,
+  FlaskConical,
 } from 'lucide-react'
 import { useTutorialStore } from '../store/tutorialStore'
 import ThemeToggle from '../components/ui/ThemeToggle'
@@ -137,6 +138,14 @@ export default function WelcomePage() {
             )}
             {hasProgress ? 'Continuar la guía' : 'Empezar la guía'}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+
+          <Link
+            to="/demos"
+            className="btn-ghost h-12 w-full text-[13px]"
+          >
+            <FlaskConical className="h-4 w-4" />
+            Cargar un demo precargado
           </Link>
 
           <Link

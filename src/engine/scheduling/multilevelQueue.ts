@@ -1,12 +1,8 @@
 import type { Process } from '../processes/types'
 import type { SchedulerConfig, SchedulingResult, TimeSlice } from './types'
 import type { SchedulableTask } from './metrics'
-import {
-  computeMetrics,
-  deepCopyProcesses,
-  flattenTasks,
-  taskKey,
-} from './metrics'
+import { computeMetrics, deepCopyProcesses, flattenTasks } from './metrics'
+import { mergeContiguous } from './multiCore'
 
 function queueForPriority(priority: number): number {
   if (priority === 1) return 0
@@ -14,94 +10,140 @@ function queueForPriority(priority: number): number {
   return 2
 }
 
+interface Slot {
+  task: SchedulableTask | null
+  queueIdx: number
+  quantumUsed: number
+}
+
 export function multilevelQueue(
   processes: Process[],
   config: SchedulerConfig,
 ): SchedulingResult {
-  const quantum = config.quantum ?? 2
+  const quantum = Math.max(1, config.quantum ?? 2)
+  const numCores = Math.max(1, config.numCores ?? 1)
   const procs = deepCopyProcesses(processes)
   const tasks = flattenTasks(procs)
 
   tasks.sort((a, b) => a.arrivalTime - b.arrivalTime || a.pid - b.pid)
 
-  const timeline: TimeSlice[] = []
-  let currentTime = 0
   const queues: SchedulableTask[][] = [[], [], []]
-  let taskIdx = 0
+  const added = new Set<SchedulableTask>()
+  const slots: Slot[] = Array.from({ length: numCores }, () => ({
+    task: null,
+    queueIdx: 0,
+    quantumUsed: 0,
+  }))
+  const perCore: TimeSlice[][] = Array.from({ length: numCores }, () => [])
 
-  const addArrivals = (time: number) => {
-    while (taskIdx < tasks.length && tasks[taskIdx].arrivalTime <= time) {
-      const t = tasks[taskIdx++]
-      queues[queueForPriority(t.priority)].push(t)
+  let currentTime = 0
+
+  const enqueueArrivals = (time: number) => {
+    for (const t of tasks) {
+      if (!added.has(t) && t.arrivalTime <= time && t.remainingTime > 0) {
+        queues[queueForPriority(t.priority)].push(t)
+        added.add(t)
+      }
     }
   }
 
-  addArrivals(currentTime)
+  const allDone = () => tasks.every((t) => t.remainingTime === 0)
+  const queuesEmpty = () => queues.every((q) => q.length === 0)
+  const slotsEmpty = () => slots.every((s) => s.task === null)
+  const highestNonEmptyQueue = () => queues.findIndex((q) => q.length > 0)
 
-  const allEmpty = () => queues.every((q) => q.length === 0)
+  let safety = 0
+  const MAX = 1_000_000
 
-  while (!allEmpty() || taskIdx < tasks.length) {
-    if (allEmpty()) {
-      currentTime = tasks[taskIdx].arrivalTime
-      addArrivals(currentTime)
+  while (!allDone() && safety++ < MAX) {
+    enqueueArrivals(currentTime)
+
+    if (queuesEmpty() && slotsEmpty()) {
+      const next = tasks
+        .filter((t) => t.remainingTime > 0 && t.arrivalTime > currentTime)
+        .reduce((m, t) => Math.min(m, t.arrivalTime), Infinity)
+      if (next === Infinity) break
+      currentTime = next
+      continue
     }
 
-    const qIdx = queues.findIndex((q) => q.length > 0)
-    if (qIdx === -1) continue
+    // Preempt: si un slot tiene tarea de cola baja y llega una de cola más alta,
+    // libera el slot para que la nueva tome su lugar este mismo tick.
+    for (const slot of slots) {
+      if (!slot.task) continue
+      const better = highestNonEmptyQueue()
+      if (better !== -1 && better < slot.queueIdx) {
+        queues[slot.queueIdx].unshift(slot.task)
+        slot.task = null
+        slot.quantumUsed = 0
+      }
+    }
 
-    const task = queues[qIdx].shift()!
+    // Asigna a slots libres tomando de la cola más prioritaria disponible.
+    for (const slot of slots) {
+      if (slot.task !== null) continue
+      const qIdx = highestNonEmptyQueue()
+      if (qIdx === -1) break
+      slot.task = queues[qIdx].shift()!
+      slot.queueIdx = qIdx
+      slot.quantumUsed = 0
+    }
 
-    let nextHigherArrival = Infinity
-    for (let i = taskIdx; i < tasks.length; i++) {
+    let anyRan = false
+    for (let i = 0; i < slots.length; i++) {
+      const slot = slots[i]
+      if (!slot.task) continue
+      anyRan = true
+      const last = perCore[i][perCore[i].length - 1]
       if (
-        tasks[i].arrivalTime > currentTime &&
-        queueForPriority(tasks[i].priority) < qIdx
+        last &&
+        last.pid === slot.task.pid &&
+        last.tid === slot.task.tid &&
+        last.end === currentTime
       ) {
-        nextHigherArrival = tasks[i].arrivalTime
-        break
-      }
-    }
-
-    let maxExec: number
-    if (qIdx <= 1) {
-      maxExec = Math.min(quantum, task.remainingTime)
-    } else {
-      maxExec = task.remainingTime
-    }
-
-    if (nextHigherArrival !== Infinity) {
-      maxExec = Math.min(maxExec, nextHigherArrival - currentTime)
-    }
-
-    const last = timeline[timeline.length - 1]
-    if (
-      last &&
-      last.pid === task.pid &&
-      last.tid === task.tid &&
-      last.end === currentTime
-    ) {
-      last.end += maxExec
-    } else {
-      timeline.push({
-        pid: task.pid,
-        tid: task.tid,
-        start: currentTime,
-        end: currentTime + maxExec,
-      })
-    }
-
-    currentTime += maxExec
-    task.remainingTime -= maxExec
-    addArrivals(currentTime)
-
-    if (task.remainingTime > 0) {
-      if (qIdx === 2) {
-        queues[qIdx].unshift(task)
+        last.end = currentTime + 1
       } else {
-        queues[qIdx].push(task)
+        perCore[i].push({
+          pid: slot.task.pid,
+          tid: slot.task.tid,
+          start: currentTime,
+          end: currentTime + 1,
+          core: i,
+        })
       }
+      slot.task.remainingTime -= 1
+      slot.quantumUsed += 1
+    }
+
+    currentTime += 1
+    enqueueArrivals(currentTime)
+
+    for (const slot of slots) {
+      if (!slot.task) continue
+      if (slot.task.remainingTime === 0) {
+        slot.task = null
+        slot.quantumUsed = 0
+      } else if (slot.queueIdx <= 1 && slot.quantumUsed === quantum) {
+        queues[slot.queueIdx].push(slot.task)
+        slot.task = null
+        slot.quantumUsed = 0
+      }
+    }
+
+    if (!anyRan) {
+      const next = tasks
+        .filter((t) => t.remainingTime > 0 && t.arrivalTime > currentTime - 1)
+        .reduce((m, t) => Math.min(m, t.arrivalTime), Infinity)
+      if (next === Infinity) break
+      currentTime = next
     }
   }
 
-  return computeMetrics(procs, timeline)
+  const merged = perCore.map((row) => mergeContiguous(row))
+  const flat = merged
+    .flat()
+    .slice()
+    .sort((a, b) => a.start - b.start || (a.core ?? 0) - (b.core ?? 0))
+
+  return computeMetrics(procs, flat, { timelinePerCore: merged, numCores })
 }

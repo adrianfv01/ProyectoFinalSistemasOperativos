@@ -86,10 +86,21 @@ function buildTaskMap(processes: Process[]): Map<string, TaskInfo> {
   return map
 }
 
+export interface ComputeMetricsOptions {
+  timelinePerCore?: TimeSlice[][]
+  numCores?: number
+}
+
 export function computeMetrics(
   processes: Process[],
   timeline: TimeSlice[],
+  options: ComputeMetricsOptions = {},
 ): SchedulingResult {
+  const numCores = Math.max(1, options.numCores ?? 1)
+  const timelinePerCore =
+    options.timelinePerCore ??
+    (numCores === 1 ? [timeline] : Array.from({ length: numCores }, () => []))
+
   const taskMap = buildTaskMap(processes)
 
   const completionTimes = new Map<string, number>()
@@ -133,16 +144,28 @@ export function computeMetrics(
   const totalBusy = timeline.reduce((s, sl) => s + (sl.end - sl.start), 0)
   const makespan =
     timeline.length > 0
-      ? timeline[timeline.length - 1].end - timeline[0].start
+      ? Math.max(...timeline.map((s) => s.end)) -
+        Math.min(...timeline.map((s) => s.start))
       : 0
-  const cpuUtilization = makespan > 0 ? (totalBusy / makespan) * 100 : 0
+  const cpuUtilization =
+    makespan > 0 ? (totalBusy / (makespan * numCores)) * 100 : 0
 
   let contextSwitches = 0
-  for (let i = 1; i < timeline.length; i++) {
-    if (taskKey(timeline[i]) !== taskKey(timeline[i - 1])) {
-      contextSwitches++
+  for (const row of timelinePerCore) {
+    for (let i = 1; i < row.length; i++) {
+      if (taskKey(row[i]) !== taskKey(row[i - 1])) {
+        contextSwitches++
+      }
     }
   }
 
-  return { timeline, metrics, averages, cpuUtilization, contextSwitches }
+  return {
+    timeline,
+    timelinePerCore,
+    numCores,
+    metrics,
+    averages,
+    cpuUtilization,
+    contextSwitches,
+  }
 }

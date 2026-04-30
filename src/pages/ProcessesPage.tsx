@@ -5,6 +5,7 @@ import ProcessForm from '../components/processes/ProcessForm'
 import ProcessTable from '../components/processes/ProcessTable'
 import StateDiagram from '../components/processes/StateDiagram'
 import ThreadManager from '../components/processes/ThreadManager'
+import ForkTree from '../components/processes/ForkTree'
 import BottomSheet from '../components/ui/BottomSheet'
 import Fab from '../components/ui/Fab'
 import Modal from '../components/ui/Modal'
@@ -59,10 +60,13 @@ export default function ProcessesPage() {
       <ProcessTable selectedPid={effectivePid} onSelectPid={setSelectedPid} />
 
       {processes.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <StateDiagram selectedPid={effectivePid} />
-          <ThreadManager selectedPid={effectivePid} />
-        </div>
+        <>
+          <ForkTree selectedPid={effectivePid} onSelectPid={setSelectedPid} />
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <StateDiagram selectedPid={effectivePid} />
+            <ThreadManager selectedPid={effectivePid} />
+          </div>
+        </>
       )}
 
       <Fab

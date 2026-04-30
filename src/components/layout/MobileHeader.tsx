@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { GraduationCap, HardDrive } from 'lucide-react'
+import { GraduationCap, HardDrive, FlaskConical } from 'lucide-react'
 import { getRouteByPath } from './routesConfig'
 import ThemeToggle from '../ui/ThemeToggle'
 import AboutButton from '../ui/AboutButton'
@@ -26,6 +26,14 @@ export default function MobileHeader() {
       <div className="flex items-center gap-2">
         <AboutButton />
         <ThemeToggle />
+        <Link
+          to="/demos"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-[color:var(--border-strong)] bg-[color:var(--surface)] text-[color:var(--accent)] transition active:scale-95 hover:border-[color:var(--accent)]/40"
+          aria-label="Cargar datos precargados"
+          title="Datos precargados"
+        >
+          <FlaskConical className="h-3.5 w-3.5" />
+        </Link>
         <Link
           to="/guia"
           className="flex items-center gap-1.5 rounded-lg border border-[color:var(--border-strong)] bg-[color:var(--surface)] px-3 py-1.5 text-[11px] font-semibold text-[color:var(--text)] transition active:scale-95 hover:border-[color:var(--accent)]/40"
