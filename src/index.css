@@ -2,6 +2,31 @@
 @import "tailwindcss";
 
 /* ============================================================
+   TRANSICIÓN DE TEMA (View Transitions API)
+   ============================================================
+   Al alternar entre claro y oscuro, el themeStore dispara
+   document.startViewTransition y aplica una animación de
+   clip-path (barrido lateral con borde recto vertical) sobre
+   ::view-transition-new(root). Aquí desactivamos el cross-fade
+   por defecto y forzamos el orden de capas para que el snapshot
+   nuevo se revele encima del antiguo siguiendo el barrido.
+   ============================================================ */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* ============================================================
    TOKENS SEMÁNTICOS
    ============================================================
    Toda la paleta vive aquí. Cambia estas variables y la app

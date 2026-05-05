@@ -25,7 +25,7 @@ export default function ReplacementTimeline() {
       </h3>
       <div
         ref={containerRef}
-        className="flex gap-1 overflow-x-auto pb-2"
+        className="flex gap-1 overflow-x-auto px-1 pb-2 pt-1"
         data-no-swipe
       >
         {replacementSteps.map((step, i) => {
