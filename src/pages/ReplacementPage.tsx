@@ -3,6 +3,7 @@ import ReplacementAlgorithmSelector from '../components/pageReplacement/Replacem
 import ReplacementVisualization from '../components/pageReplacement/ReplacementVisualization'
 import ReplacementTimeline from '../components/pageReplacement/ReplacementTimeline'
 import ReplacementControls from '../components/pageReplacement/ReplacementControls'
+import ReplacementExplanation from '../components/pageReplacement/ReplacementExplanation'
 import StickyActionBar from '../components/ui/StickyActionBar'
 
 export default function ReplacementPage() {
@@ -15,17 +16,6 @@ export default function ReplacementPage() {
 
   return (
     <div className="space-y-5">
-      <div className="hidden items-end justify-between lg:flex">
-        <div>
-          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
-            Módulo · Page Replacement
-          </span>
-          <h1 className="mt-1 text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
-            Reemplazo de páginas
-          </h1>
-        </div>
-      </div>
-
       <ReplacementAlgorithmSelector />
 
       {!hasSteps && (
@@ -60,6 +50,8 @@ export default function ReplacementPage() {
               accent="text-green-400"
             />
           </div>
+
+          <ReplacementExplanation />
 
           <StickyActionBar>
             <ReplacementControls variant="bar" />

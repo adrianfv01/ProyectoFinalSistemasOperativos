@@ -15,6 +15,8 @@ interface AlgorithmPickerProps {
   quantum: number
   onToggleScheduling: (key: AlgorithmName) => void
   onToggleReplacement: (key: ReplacementAlgorithmName) => void
+  onToggleAllScheduling: () => void
+  onToggleAllReplacement: () => void
   onQuantumChange: (q: number) => void
   onCompare: () => void
   disabled?: boolean
@@ -26,6 +28,8 @@ export default function AlgorithmPicker({
   quantum,
   onToggleScheduling,
   onToggleReplacement,
+  onToggleAllScheduling,
+  onToggleAllReplacement,
   onQuantumChange,
   onCompare,
   disabled,
@@ -35,6 +39,8 @@ export default function AlgorithmPicker({
 
   const needsQuantum = NEEDS_QUANTUM.some((k) => selectedScheduling.has(k))
   const hasSelection = selectedScheduling.size > 0 || selectedReplacement.size > 0
+  const allSchedSelected = selectedScheduling.size === SCHEDULING_KEYS.length
+  const allReplSelected = selectedReplacement.size === REPLACEMENT_KEYS.length
 
   return (
     <div className="surface-card p-4 sm:p-5">
@@ -45,6 +51,8 @@ export default function AlgorithmPicker({
           count={selectedScheduling.size}
           open={openSched}
           onToggle={() => setOpenSched((v) => !v)}
+          actionLabel={allSchedSelected ? 'Quitar todos' : 'Todos'}
+          onAction={onToggleAllScheduling}
         >
           <div className="grid grid-cols-2 gap-2">
             {SCHEDULING_KEYS.map((key) => {
@@ -73,6 +81,8 @@ export default function AlgorithmPicker({
           count={selectedReplacement.size}
           open={openRepl}
           onToggle={() => setOpenRepl((v) => !v)}
+          actionLabel={allReplSelected ? 'Quitar todos' : 'Todos'}
+          onAction={onToggleAllReplacement}
         >
           <div className="grid grid-cols-2 gap-2">
             {REPLACEMENT_KEYS.map((key) => {
@@ -128,6 +138,8 @@ interface CollapsibleProps {
   open: boolean
   onToggle: () => void
   children: React.ReactNode
+  actionLabel?: string
+  onAction?: () => void
 }
 
 function CollapsibleSection({
@@ -137,26 +149,53 @@ function CollapsibleSection({
   open,
   onToggle,
   children,
+  actionLabel,
+  onAction,
 }: CollapsibleProps) {
   return (
     <div>
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-2 text-left transition hover:bg-[color:var(--surface-2)]"
-        aria-expanded={open}
-      >
-        <span className="flex items-center gap-2 text-[13px] font-semibold text-[color:var(--text)]">
+      <div className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-2 transition hover:bg-[color:var(--surface-2)]">
+        <button
+          type="button"
+          onClick={onToggle}
+          className="flex flex-1 items-center gap-2 text-left text-[13px] font-semibold text-[color:var(--text)]"
+          aria-expanded={open}
+        >
           {icon}
-          {title}
+          <span>{title}</span>
           {count > 0 && (
             <span className="chip chip-accent">{count} sel.</span>
           )}
-        </span>
-        <motion.span animate={{ rotate: open ? 0 : -90 }} transition={{ duration: 0.18 }}>
-          <ChevronDown size={18} className="text-[color:var(--text-muted)]" />
-        </motion.span>
-      </button>
+        </button>
+        <div className="flex items-center gap-1">
+          {onAction && actionLabel && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onAction()
+              }}
+              className="rounded-md border border-[color:var(--border)] bg-[color:var(--surface-2)] px-2 py-1 text-[11px] font-medium text-[color:var(--text-muted)] transition hover:text-[color:var(--text)]"
+            >
+              {actionLabel}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label={open ? 'Contraer' : 'Expandir'}
+            className="rounded-md p-1 text-[color:var(--text-muted)] transition hover:text-[color:var(--text)]"
+          >
+            <motion.span
+              animate={{ rotate: open ? 0 : -90 }}
+              transition={{ duration: 0.18 }}
+              className="inline-flex"
+            >
+              <ChevronDown size={18} />
+            </motion.span>
+          </button>
+        </div>
+      </div>
       <AnimatePresence initial={false}>
         {open && (
           <motion.div

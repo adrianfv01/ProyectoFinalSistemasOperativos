@@ -23,22 +23,8 @@ export default function ProcessesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="hidden lg:block">
-          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
-            Módulo · Process Manager
-          </span>
-          <div className="mt-1 flex items-baseline gap-3">
-            <h1 className="text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
-              Captura de Procesos
-            </h1>
-            <span className="chip chip-accent">
-              {processes.length} {processes.length === 1 ? 'proceso' : 'procesos'}
-            </span>
-          </div>
-        </div>
-
-        <span className="chip chip-accent lg:hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <span className="chip chip-accent">
           {processes.length} {processes.length === 1 ? 'proceso' : 'procesos'}
         </span>
 

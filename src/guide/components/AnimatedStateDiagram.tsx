@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Sparkles } from 'lucide-react'
+import ComponentLegend from './ComponentLegend'
 
 const STATES = [
   { id: 'new', label: 'Nuevo', desc: 'Recién creado.' },
@@ -34,6 +35,7 @@ export default function AnimatedStateDiagram() {
   const currentInfo = STATES.find((s) => s.id === currentState)!
 
   return (
+    <div className="space-y-2">
     <div className="surface-card space-y-3 p-4">
       <p className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
         Ciclo de vida de un proceso
@@ -81,6 +83,30 @@ export default function AnimatedStateDiagram() {
           </motion.div>
         </AnimatePresence>
       </div>
+    </div>
+    <ComponentLegend
+      items={[
+        {
+          label: 'Cada caja de color',
+          description:
+            'Es uno de los cinco estados por los que puede pasar un proceso durante su vida.',
+        },
+        {
+          label: 'Caja resaltada',
+          description:
+            'Es el estado actual del proceso de ejemplo. Cambia cada segundo y medio para mostrar el ciclo.',
+        },
+        {
+          label: 'Flechas entre cajas',
+          description:
+            'Indican las transiciones permitidas. Por ejemplo: de Listo solo se puede pasar a Ejecución.',
+        },
+        {
+          label: 'Tarjeta inferior',
+          description: 'Describe en palabras qué significa el estado en el que está ahora.',
+        },
+      ]}
+    />
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Pause, Play, RotateCcw } from 'lucide-react'
 import type { TimeSlice } from '../../engine/scheduling/types'
 import { getProcessColor, getProcessColorWithAlpha } from '../../utils/colors'
+import ComponentLegend, { ColorSwatch } from './ComponentLegend'
 
 interface MiniGanttProps {
   timeline: TimeSlice[]
@@ -60,7 +61,10 @@ export default function MiniGantt({
     setPlaying(true)
   }
 
+  const uniquePids = Array.from(new Set(timeline.map((s) => s.pid))).sort((a, b) => a - b)
+
   return (
+    <div className="space-y-2">
     <div className="surface-card p-3">
       <div className="mb-2 flex items-center justify-between">
         <p className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
@@ -139,6 +143,40 @@ export default function MiniGantt({
           </div>
         </div>
       </div>
+    </div>
+    <ComponentLegend
+      items={[
+        {
+          label: 'Cada barra de color',
+          description:
+            'Es un proceso ocupando la CPU. El ancho de la barra equivale a su tiempo de ráfaga.',
+        },
+        {
+          label: 'Eje horizontal',
+          description:
+            'Es el reloj de la simulación. Cada número representa un segundo (tick).',
+        },
+        {
+          label: 'Tick resaltado',
+          description:
+            'El número en color de acento marca el tiempo actual de la animación.',
+        },
+        {
+          label: 'Colores por proceso',
+          description: `Cada proceso tiene un color fijo. ${
+            uniquePids.length > 0
+              ? 'Aquí se ven: ' +
+                uniquePids.map((p) => `P${p}`).join(', ') +
+                '.'
+              : ''
+          }`,
+          swatch:
+            uniquePids.length > 0 ? (
+              <ColorSwatch color={getProcessColor(uniquePids[0])} />
+            ) : undefined,
+        },
+      ]}
+    />
     </div>
   )
 }

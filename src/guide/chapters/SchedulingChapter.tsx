@@ -5,6 +5,7 @@ import {
   ListTree,
   PlayCircle,
   Trophy,
+  Users,
 } from 'lucide-react'
 import GuideStep from '../GuideStep'
 import AnalogyHero from '../components/AnalogyHero'
@@ -13,6 +14,7 @@ import InsightBanner from '../components/InsightBanner'
 import AlgorithmCardPicker from '../components/AlgorithmCardPicker'
 import BigSlider from '../components/BigSlider'
 import MiniGantt from '../components/MiniGantt'
+import MiniReadyQueueAnim from '../components/MiniReadyQueueAnim'
 import WaitComparison from '../components/WaitComparison'
 import {
   useTutorialStore,
@@ -97,6 +99,34 @@ function StepPick() {
           />
         </div>
       )}
+    </GuideStep>
+  )
+}
+
+function StepReadyQueue() {
+  return (
+    <GuideStep
+      title="La cola de listos"
+      hook="Antes del Gantt"
+      icon={Users}
+    >
+      <p className="text-sm leading-relaxed text-gray-300">
+        Antes de mirar el diagrama, hay que entender por dónde pasan los
+        procesos: llegan, hacen fila en la <strong>cola de listos</strong>, la
+        CPU toma uno y, cuando termina, lo manda a la zona de{' '}
+        <strong>terminados</strong>.
+      </p>
+
+      <MiniReadyQueueAnim />
+
+      <ConceptCard title="¿Por qué importa la cola?" tone="info">
+        <p>
+          La cola de listos es el corazón del planificador. La regla del
+          algoritmo (FCFS, SJF, Round Robin, etc.) decide en qué orden saca
+          procesos de esta fila. Cambiar la regla cambia los tiempos de espera
+          de cada proceso.
+        </p>
+      </ConceptCard>
     </GuideStep>
   )
 }
@@ -214,6 +244,12 @@ export const schedulingChapter: GuideChapterDefinition = {
       render: () => <StepPick />,
       canAdvance: () => useTutorialStore.getState().schedulingChoice !== null,
       blockedHint: COMMON.blockedPickAlgo,
+    },
+    {
+      id: 'queue',
+      title: 'Cola de listos',
+      icon: Users,
+      render: () => <StepReadyQueue />,
     },
     {
       id: 'gantt',

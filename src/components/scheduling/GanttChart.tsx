@@ -38,7 +38,8 @@ export default function GanttChart() {
     return m
   }, [perCore])
 
-  const maxStep = Math.max(0, timeline.length - 1)
+  const maxStep = timeline.length
+  const isFinished = timeline.length > 0 && currentStep >= timeline.length
 
   const ticks = useMemo(() => {
     const t: number[] = []
@@ -63,6 +64,7 @@ export default function GanttChart() {
 
   const totalHeight = numCores * BAR_H + (numCores - 1) * ROW_GAP + 8
   const showLabels = numCores > 1
+  const utilPerCore = result?.cpuUtilizationPerCore ?? []
 
   return (
     <div className="surface-card p-4">
@@ -80,7 +82,7 @@ export default function GanttChart() {
         </span>
       </div>
 
-      <div ref={scrollRef} className="overflow-x-auto pb-2" data-no-swipe>
+      <div ref={scrollRef} className="overflow-x-auto px-2 pb-2 pt-2" data-no-swipe>
         <div
           style={{
             width: maxTime * CELL_W + (showLabels ? LABEL_W : 0) + 40,
@@ -168,10 +170,40 @@ export default function GanttChart() {
         </div>
       </div>
 
+      {numCores > 1 && utilPerCore.length > 0 && (
+        <div className="mt-3 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-3">
+          <p className="mb-2 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
+            Utilización por núcleo
+          </p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {utilPerCore.map((u, i) => (
+              <div
+                key={i}
+                className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-2"
+                title={`Core ${i}: ocupado ${u.toFixed(1)}% del tiempo total`}
+              >
+                <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.14em] text-[color:var(--text-faint)]">
+                  <span>Core {i}</span>
+                  <span className="tabular-nums text-[color:var(--text)]">
+                    {u.toFixed(0)}%
+                  </span>
+                </div>
+                <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-[color:var(--surface-2)]">
+                  <div
+                    className="h-full rounded-full bg-[color:var(--accent)]"
+                    style={{ width: `${Math.min(100, Math.max(0, u))}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {isMobile && maxStep > 0 && (
         <div className="mt-3 flex items-center gap-3" data-no-swipe>
           <span className="shrink-0 font-mono text-[11px] tabular-nums text-[color:var(--text-muted)]">
-            {currentStep + 1}/{timeline.length}
+            {isFinished ? 'Fin' : `${currentStep + 1}/${timeline.length}`}
           </span>
           <input
             type="range"

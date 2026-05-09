@@ -6,6 +6,7 @@ import { initializeFrames } from '../../engine/memory'
 import { getProcessColor } from '../../utils/colors'
 import MiniMemoryGrid from './MiniMemoryGrid'
 import MiniTimeline from './MiniTimeline'
+import ComponentLegend, { OutlineSwatch } from './ComponentLegend'
 
 interface ReplacementPlayerProps {
   steps: ReplacementStep[]
@@ -160,11 +161,42 @@ export default function ReplacementPlayer({ steps, numFrames }: ReplacementPlaye
 
       <MiniMemoryGrid
         frames={frames}
+        showLegend={false}
         highlightFrame={
           currentStep?.isPageFault && currentStep.loadedIntoFrame !== undefined
             ? currentStep.loadedIntoFrame
             : null
         }
+      />
+
+      <ComponentLegend
+        title="Cómo leer este reproductor"
+        items={[
+          {
+            label: 'Tarjeta superior',
+            description:
+              'Indica qué proceso pidió qué página en este paso y si fue acierto o fallo.',
+          },
+          {
+            label: 'Texto verde "Acierto"',
+            description: 'La página solicitada ya estaba en algún marco. No hay nada que cargar.',
+          },
+          {
+            label: 'Texto rojo "Fallo"',
+            description:
+              'La página no estaba en memoria. El sistema la carga; si no hay marcos libres, expulsa una.',
+          },
+          {
+            label: 'Marco con borde de acento',
+            description: 'Marco recién cargado tras el fallo.',
+            swatch: <OutlineSwatch color="var(--accent)" />,
+          },
+          {
+            label: 'Línea de tiempo inferior',
+            description:
+              'Resumen de cada referencia: verde = acierto, rojo = fallo. El cursor blanco marca el paso actual.',
+          },
+        ]}
       />
 
       <MiniTimeline steps={steps} cursor={cursor} />

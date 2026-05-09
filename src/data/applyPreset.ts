@@ -3,16 +3,22 @@ import { useSchedulingStore } from '../store/schedulingStore'
 import { useMemoryStore } from '../store/memoryStore'
 import { getScheduler } from '../engine/scheduling'
 import { generateReferenceString, getReplacementAlgorithm } from '../engine/memory'
-import type { Preset } from './presets'
+import {
+  getMemoryForPreset,
+  getProcessesForPreset,
+  type Preset,
+} from './presets'
 
-export function applyPreset(preset: Preset) {
-  useProcessStore.getState().setProcesses(preset.processes)
+export function applyPreset(preset: Preset, size?: number) {
+  const processes = getProcessesForPreset(preset, size)
+  useProcessStore.getState().setProcesses(processes)
 
-  if (preset.memory) {
+  const memory = getMemoryForPreset(preset, size)
+  if (memory) {
     useMemoryStore.setState({
-      totalMemory: preset.memory.totalMemory,
-      pageSize: preset.memory.pageSize,
-      frames: preset.memory.frames,
+      totalMemory: memory.totalMemory,
+      pageSize: memory.pageSize,
+      frames: memory.frames,
     })
   }
 
@@ -32,7 +38,7 @@ export function applyPreset(preset: Preset) {
     if (autoRun) {
       try {
         const scheduler = getScheduler(algorithm)
-        const result = scheduler(preset.processes, fullConfig)
+        const result = scheduler(processes, fullConfig)
         useSchedulingStore.setState({ result, currentStep: 0 })
       } catch {
         // Si falla la ejecución automática, dejamos al usuario presionar Ejecutar.
@@ -44,7 +50,7 @@ export function applyPreset(preset: Preset) {
 
   if (preset.replacement) {
     const { algorithm, autoRun = true, customReferenceString } = preset.replacement
-    const frames = preset.memory?.frames ?? useMemoryStore.getState().frames
+    const frames = memory?.frames ?? useMemoryStore.getState().frames
 
     useMemoryStore.setState({
       selectedAlgorithm: algorithm,
@@ -55,8 +61,7 @@ export function applyPreset(preset: Preset) {
 
     if (autoRun) {
       try {
-        const refs =
-          customReferenceString ?? generateReferenceString(preset.processes)
+        const refs = customReferenceString ?? generateReferenceString(processes)
         if (refs.length > 0) {
           const fn = getReplacementAlgorithm(algorithm)
           const steps = fn(refs, frames)

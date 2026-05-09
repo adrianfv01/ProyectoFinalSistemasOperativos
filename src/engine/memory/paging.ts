@@ -57,6 +57,44 @@ export function allocatePages(
   }
 }
 
+function buildLocalityPattern(numPages: number, length: number): number[] {
+  if (numPages <= 0 || length <= 0) return []
+  const pattern: number[] = []
+
+  for (let i = 0; i < numPages && pattern.length < length; i++) {
+    pattern.push(i)
+  }
+
+  if (numPages === 1) {
+    while (pattern.length < length) pattern.push(0)
+    return pattern
+  }
+
+  const hotSize = Math.max(1, Math.floor(numPages / 2))
+  const tail = numPages - 1
+  let cursor = 0
+
+  while (pattern.length < length) {
+    const phase = (pattern.length - numPages) % 9
+    if (phase === 0 || phase === 2 || phase === 5) {
+      pattern.push(cursor % hotSize)
+      cursor++
+    } else if (phase === 1 || phase === 6) {
+      pattern.push(0)
+    } else if (phase === 3) {
+      pattern.push(Math.min(numPages - 1, hotSize))
+    } else if (phase === 4) {
+      pattern.push(1 % numPages)
+    } else if (phase === 7) {
+      pattern.push(tail)
+    } else {
+      pattern.push((cursor + 1) % numPages)
+    }
+  }
+
+  return pattern.slice(0, length)
+}
+
 export function generateReferenceString(
   processes: Process[],
 ): { pid: number; page: number }[] {
@@ -66,8 +104,9 @@ export function generateReferenceString(
     if (proc.numPages === 0) continue
 
     const count = Math.max(proc.burstTime, 1)
-    for (let i = 0; i < count; i++) {
-      refs.push({ pid: proc.pid, page: i % proc.numPages })
+    const pattern = buildLocalityPattern(proc.numPages, count)
+    for (const page of pattern) {
+      refs.push({ pid: proc.pid, page })
     }
   }
 

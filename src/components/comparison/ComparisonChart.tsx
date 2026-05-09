@@ -15,6 +15,7 @@ import { useChartTheme } from '../../utils/chartTheme'
 export interface SchedulingComparisonEntry {
   algorithm: string
   label: string
+  fullLabel?: string
   avgTurnaroundTime: number
   avgWaitingTime: number
   cpuUtilization: number
@@ -23,6 +24,7 @@ export interface SchedulingComparisonEntry {
 export interface ReplacementComparisonEntry {
   algorithm: string
   label: string
+  fullLabel?: string
   pageFaults: number
 }
 
@@ -90,16 +92,33 @@ export default function ComparisonChart({
   const charts: React.ReactNode[] = []
 
   const labelStyle = { fill: theme.textFaint, fontSize: 11, fontFamily: theme.axis.fontFamily }
+  const xAxisTick = { ...theme.axis, fontSize: 11 }
+
+  type LabelPayloadEntry = { payload?: { fullLabel?: string } }
+  const labelFormatter = (
+    label: React.ReactNode,
+    payload: ReadonlyArray<LabelPayloadEntry>,
+  ): React.ReactNode => payload?.[0]?.payload?.fullLabel ?? label
 
   if (hasScheduling) {
+    const xMargin = { top: 20, right: 16, bottom: 28, left: 10 }
+    const xAxisProps = {
+      dataKey: 'label',
+      tick: xAxisTick,
+      tickLine: false,
+      tickMargin: 8,
+      interval: 0 as const,
+      axisLine: { stroke: theme.border },
+    }
+
     charts.push(
       <ChartCard key="tat" title="Tiempo de retorno promedio" carousel={isMobile}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={schedulingResults} margin={{ top: 20, right: 20, bottom: 5, left: 10 }}>
+          <BarChart data={schedulingResults} margin={xMargin}>
             <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} />
-            <XAxis dataKey="label" tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} />
+            <XAxis {...xAxisProps} />
             <YAxis tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} unit=" ut" />
-            <Tooltip {...theme.tooltip} />
+            <Tooltip {...theme.tooltip} labelFormatter={labelFormatter} />
             <Bar
               dataKey="avgTurnaroundTime"
               name="Retorno promedio"
@@ -118,11 +137,11 @@ export default function ComparisonChart({
     charts.push(
       <ChartCard key="wt" title="Tiempo de espera promedio" carousel={isMobile}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={schedulingResults} margin={{ top: 20, right: 20, bottom: 5, left: 10 }}>
+          <BarChart data={schedulingResults} margin={xMargin}>
             <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} />
-            <XAxis dataKey="label" tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} />
+            <XAxis {...xAxisProps} />
             <YAxis tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} unit=" ut" />
-            <Tooltip {...theme.tooltip} />
+            <Tooltip {...theme.tooltip} labelFormatter={labelFormatter} />
             <Bar
               dataKey="avgWaitingTime"
               name="Espera promedio"
@@ -141,11 +160,11 @@ export default function ComparisonChart({
     charts.push(
       <ChartCard key="cpu" title="Uso de CPU (%)" carousel={isMobile}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={schedulingResults} margin={{ top: 20, right: 20, bottom: 5, left: 10 }}>
+          <BarChart data={schedulingResults} margin={xMargin}>
             <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} />
-            <XAxis dataKey="label" tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} />
+            <XAxis {...xAxisProps} />
             <YAxis tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} unit="%" domain={[0, 100]} />
-            <Tooltip {...theme.tooltip} />
+            <Tooltip {...theme.tooltip} labelFormatter={labelFormatter} />
             <Bar
               dataKey="cpuUtilization"
               name="Uso de CPU"
@@ -166,11 +185,18 @@ export default function ComparisonChart({
     charts.push(
       <ChartCard key="pf" title="Fallos de página" carousel={isMobile}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={replacementResults} margin={{ top: 20, right: 20, bottom: 5, left: 10 }}>
+          <BarChart data={replacementResults} margin={{ top: 20, right: 16, bottom: 28, left: 10 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={theme.grid} />
-            <XAxis dataKey="label" tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} />
+            <XAxis
+              dataKey="label"
+              tick={xAxisTick}
+              tickLine={false}
+              tickMargin={8}
+              interval={0}
+              axisLine={{ stroke: theme.border }}
+            />
             <YAxis tick={theme.axis} tickLine={false} axisLine={{ stroke: theme.border }} allowDecimals={false} />
-            <Tooltip {...theme.tooltip} />
+            <Tooltip {...theme.tooltip} labelFormatter={labelFormatter} />
             <Bar
               dataKey="pageFaults"
               name="Fallos de página"

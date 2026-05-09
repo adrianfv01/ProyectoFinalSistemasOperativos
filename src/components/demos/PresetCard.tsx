@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -9,6 +10,7 @@ import {
   Layers,
   RefreshCw,
   Sparkles,
+  Sliders,
 } from 'lucide-react'
 import { applyPreset } from '../../data/applyPreset'
 import {
@@ -42,17 +44,26 @@ interface Props {
 export default function PresetCard({ preset, index = 0 }: Props) {
   const navigate = useNavigate()
   const Icon = CATEGORY_ICON[preset.category]
+  const [size, setSize] = useState(preset.sizing.default)
+
+  const preview = useMemo(() => {
+    const processes = preset.buildProcesses(size)
+    const procCount = processes.length
+    const threadCount = processes.reduce((acc, p) => acc + p.threads.length, 0)
+    const forkCount = processes.filter((p) => p.parentPid !== undefined).length
+    const memory = preset.memory ? preset.memory(size) : undefined
+    return { procCount, threadCount, forkCount, memory }
+  }, [preset, size])
 
   const handleLoad = () => {
-    applyPreset(preset)
+    applyPreset(preset, size)
     navigate(preset.recommendedRoute)
   }
 
-  const procCount = preset.processes.length
-  const threadCount = preset.processes.reduce(
-    (acc, p) => acc + p.threads.length,
-    0,
-  )
+  const setClamped = (next: number) => {
+    const v = Math.min(preset.sizing.max, Math.max(preset.sizing.min, next))
+    setSize(v)
+  }
 
   return (
     <motion.article
@@ -79,15 +90,76 @@ export default function PresetCard({ preset, index = 0 }: Props) {
         {preset.shortDescription}
       </p>
 
+      <div className="rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] p-3">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <span className="flex items-center gap-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[color:var(--text-muted)]">
+            <Sliders size={11} />
+            Tamaño del demo
+          </span>
+          <span className="rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] px-2 py-0.5 font-mono text-[11px] tabular-nums text-[color:var(--text)]">
+            {size} {preset.sizing.unit}
+          </span>
+        </div>
+
+        {preset.sizing.helper && (
+          <p className="mb-2 text-[11px] leading-snug text-[color:var(--text-faint)]">
+            {preset.sizing.helper}
+          </p>
+        )}
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setClamped(size - 1)}
+            disabled={size <= preset.sizing.min}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] font-mono text-[14px] text-[color:var(--text-muted)] transition hover:border-[color:var(--accent)]/30 hover:text-[color:var(--text)] disabled:cursor-not-allowed disabled:opacity-30"
+            aria-label="Disminuir"
+          >
+            −
+          </button>
+          <input
+            type="range"
+            min={preset.sizing.min}
+            max={preset.sizing.max}
+            step={1}
+            value={size}
+            onChange={(e) => setClamped(parseInt(e.target.value, 10))}
+            className="h-2 w-full cursor-pointer accent-[color:var(--accent)]"
+            aria-label={`Tamaño en ${preset.sizing.unit}`}
+          />
+          <button
+            type="button"
+            onClick={() => setClamped(size + 1)}
+            disabled={size >= preset.sizing.max}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] font-mono text-[14px] text-[color:var(--text-muted)] transition hover:border-[color:var(--accent)]/30 hover:text-[color:var(--text)] disabled:cursor-not-allowed disabled:opacity-30"
+            aria-label="Aumentar"
+          >
+            +
+          </button>
+        </div>
+        <div className="mt-1 flex justify-between font-mono text-[10px] tabular-nums text-[color:var(--text-faint)]">
+          <span>min {preset.sizing.min}</span>
+          <span>default {preset.sizing.default}</span>
+          <span>max {preset.sizing.max}</span>
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-1.5">
         <span className="chip">
           <Database className="h-3 w-3 text-[color:var(--accent)]" />
-          {procCount} {procCount === 1 ? 'proceso' : 'procesos'}
+          {preview.procCount}{' '}
+          {preview.procCount === 1 ? 'proceso' : 'procesos'}
         </span>
-        {threadCount > 0 && (
+        {preview.threadCount > 0 && (
           <span className="chip">
             <Cpu className="h-3 w-3 text-[color:var(--accent)]" />
-            {threadCount} {threadCount === 1 ? 'hilo' : 'hilos'}
+            {preview.threadCount} {preview.threadCount === 1 ? 'hilo' : 'hilos'}
+          </span>
+        )}
+        {preview.forkCount > 0 && (
+          <span className="chip">
+            <GitFork className="h-3 w-3 text-[color:var(--accent)]" />
+            {preview.forkCount} fork{preview.forkCount === 1 ? '' : 's'}
           </span>
         )}
         {preset.scheduling && (
@@ -96,10 +168,10 @@ export default function PresetCard({ preset, index = 0 }: Props) {
             {preset.scheduling.algorithm.toUpperCase()}
           </span>
         )}
-        {preset.memory && (
+        {preview.memory && (
           <span className="chip">
             <HardDrive className="h-3 w-3 text-[color:var(--accent)]" />
-            {preset.memory.frames} marcos
+            {preview.memory.frames} marcos
           </span>
         )}
         {preset.replacement && (

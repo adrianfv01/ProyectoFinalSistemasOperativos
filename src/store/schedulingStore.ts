@@ -22,6 +22,17 @@ export const ALGORITHM_LABELS: Record<AlgorithmName, string> = {
   multilevelFeedback: 'Cola Multinivel con Retroalimentación',
 }
 
+export const ALGORITHM_SHORT_LABELS: Record<AlgorithmName, string> = {
+  fcfs: 'FCFS',
+  sjf: 'SJF',
+  hrrn: 'HRRN',
+  roundRobin: 'RR',
+  srtf: 'SRTF',
+  priorityPreemptive: 'Prioridad',
+  multilevelQueue: 'MLQ',
+  multilevelFeedback: 'MLFQ',
+}
+
 interface SchedulingStore {
   selectedAlgorithm: AlgorithmName
   config: SchedulerConfig

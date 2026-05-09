@@ -4,6 +4,7 @@ import type {
   ProcessMetrics,
   AverageMetrics,
   SchedulingResult,
+  QueueSnapshot,
 } from './types'
 
 export interface SchedulableTask {
@@ -89,6 +90,7 @@ function buildTaskMap(processes: Process[]): Map<string, TaskInfo> {
 export interface ComputeMetricsOptions {
   timelinePerCore?: TimeSlice[][]
   numCores?: number
+  queueSnapshots?: QueueSnapshot[]
 }
 
 export function computeMetrics(
@@ -150,6 +152,14 @@ export function computeMetrics(
   const cpuUtilization =
     makespan > 0 ? (totalBusy / (makespan * numCores)) * 100 : 0
 
+  const cpuUtilizationPerCore = timelinePerCore.map((row) => {
+    const busy = row.reduce((s, sl) => s + (sl.end - sl.start), 0)
+    return makespan > 0 ? (busy / makespan) * 100 : 0
+  })
+  while (cpuUtilizationPerCore.length < numCores) {
+    cpuUtilizationPerCore.push(0)
+  }
+
   let contextSwitches = 0
   for (const row of timelinePerCore) {
     for (let i = 1; i < row.length; i++) {
@@ -166,6 +176,10 @@ export function computeMetrics(
     metrics,
     averages,
     cpuUtilization,
+    cpuUtilizationPerCore,
     contextSwitches,
+    makespan,
+    totalBusy,
+    queueSnapshots: options.queueSnapshots,
   }
 }

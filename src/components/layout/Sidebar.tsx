@@ -1,12 +1,22 @@
 import { NavLink } from 'react-router-dom'
-import { HardDrive, GraduationCap, Sun, Moon, Sparkles, FlaskConical } from 'lucide-react'
+import {
+  HardDrive,
+  Sun,
+  Moon,
+  Sparkles,
+  FlaskConical,
+  Check,
+  Lock,
+} from 'lucide-react'
 import { useThemeStore } from '../../store/themeStore'
 import { FREE_MODE_ROUTES } from './routesConfig'
+import { usePrerequisitesStatus } from './usePrerequisites'
 import AboutButton from '../ui/AboutButton'
 
 export default function Sidebar() {
   const dark = useThemeStore((s) => s.dark)
   const toggle = useThemeStore((s) => s.toggle)
+  const prereqs = usePrerequisitesStatus()
 
   return (
     <aside className="fixed left-0 top-0 z-40 hidden h-screen w-60 flex-col border-r border-[color:var(--border)] bg-[color:var(--bg-soft)]/80 backdrop-blur-xl lg:flex">
@@ -52,33 +62,57 @@ export default function Sidebar() {
           Modo libre
         </p>
 
-        {FREE_MODE_ROUTES.map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              `group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-all ${
-                isActive
-                  ? 'bg-[color:var(--surface-2)] text-[color:var(--text)]'
-                  : 'text-[color:var(--text-muted)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text)]'
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                {isActive && (
-                  <span className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-[color:var(--accent)] shadow-[0_0_8px_var(--accent)]" />
-                )}
-                <Icon
-                  className={`h-4 w-4 shrink-0 transition-colors ${
-                    isActive ? 'text-[color:var(--accent)]' : 'group-hover:text-[color:var(--text)]'
-                  }`}
-                />
-                {label}
-              </>
-            )}
-          </NavLink>
-        ))}
+        {FREE_MODE_ROUTES.map(({ to, label, icon: Icon, prerequisite }) => {
+          const ready = prereqs[prerequisite]
+          return (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                `group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-all ${
+                  isActive
+                    ? 'bg-[color:var(--surface-2)] text-[color:var(--text)]'
+                    : 'text-[color:var(--text-muted)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text)]'
+                }`
+              }
+              title={
+                ready
+                  ? undefined
+                  : 'Requiere completar pasos previos para mostrar resultados'
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-[color:var(--accent)] shadow-[0_0_8px_var(--accent)]" />
+                  )}
+                  <Icon
+                    className={`h-4 w-4 shrink-0 transition-colors ${
+                      isActive
+                        ? 'text-[color:var(--accent)]'
+                        : 'group-hover:text-[color:var(--text)]'
+                    }`}
+                  />
+                  <span className="flex-1">{label}</span>
+                  {prerequisite !== 'none' &&
+                    (ready ? (
+                      <Check
+                        size={12}
+                        className="shrink-0 text-emerald-300"
+                        aria-label="Listo"
+                      />
+                    ) : (
+                      <Lock
+                        size={11}
+                        className="shrink-0 text-[color:var(--text-faint)]"
+                        aria-label="Faltan datos previos"
+                      />
+                    ))}
+                </>
+              )}
+            </NavLink>
+          )
+        })}
 
         <div className="mt-4 border-t border-[color:var(--border)] pt-3">
           <NavLink

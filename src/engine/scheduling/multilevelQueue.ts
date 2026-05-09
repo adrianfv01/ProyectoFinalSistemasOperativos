@@ -1,8 +1,19 @@
 import type { Process } from '../processes/types'
-import type { SchedulerConfig, SchedulingResult, TimeSlice } from './types'
+import type {
+  QueueSnapshot,
+  SchedulerConfig,
+  SchedulingResult,
+  TimeSlice,
+} from './types'
 import type { SchedulableTask } from './metrics'
 import { computeMetrics, deepCopyProcesses, flattenTasks } from './metrics'
 import { mergeContiguous } from './multiCore'
+
+const MLQ_QUEUE_LABELS = [
+  'Nivel 1 · Alta prioridad',
+  'Nivel 2 · Media prioridad',
+  'Nivel 3 · Baja prioridad',
+]
 
 function queueForPriority(priority: number): number {
   if (priority === 1) return 0
@@ -35,6 +46,18 @@ export function multilevelQueue(
     quantumUsed: 0,
   }))
   const perCore: TimeSlice[][] = Array.from({ length: numCores }, () => [])
+  const queueSnapshots: QueueSnapshot[] = []
+
+  const snapshot = (time: number) => {
+    queueSnapshots.push({
+      time,
+      queues: queues.map((q, i) => ({
+        level: i,
+        label: MLQ_QUEUE_LABELS[i] ?? `Nivel ${i + 1}`,
+        pids: q.map((t) => ({ pid: t.pid, tid: t.tid })),
+      })),
+    })
+  }
 
   let currentTime = 0
 
@@ -57,6 +80,7 @@ export function multilevelQueue(
 
   while (!allDone() && safety++ < MAX) {
     enqueueArrivals(currentTime)
+    snapshot(currentTime)
 
     if (queuesEmpty() && slotsEmpty()) {
       const next = tasks
@@ -145,5 +169,9 @@ export function multilevelQueue(
     .slice()
     .sort((a, b) => a.start - b.start || (a.core ?? 0) - (b.core ?? 0))
 
-  return computeMetrics(procs, flat, { timelinePerCore: merged, numCores })
+  return computeMetrics(procs, flat, {
+    timelinePerCore: merged,
+    numCores,
+    queueSnapshots,
+  })
 }

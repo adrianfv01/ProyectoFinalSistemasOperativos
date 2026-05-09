@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import Sidebar from './Sidebar'
 import MobileHeader from './MobileHeader'
 import MobileTabBar from './MobileTabBar'
+import ModuleHeader from './ModuleHeader'
 import SwipeNavigator from './SwipeNavigator'
 
 export default function AppShell({ children }: { children: ReactNode }) {
@@ -16,7 +17,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
           className="relative flex-1 overflow-y-auto px-4 pt-4 sm:px-6 sm:pt-6 lg:px-10 lg:pt-8"
           style={{ paddingBottom: 'calc(4.5rem + env(safe-area-inset-bottom) + 1rem)' }}
         >
-          <div className="mx-auto w-full max-w-6xl">
+          <div className="mx-auto w-full max-w-6xl space-y-5">
+            <ModuleHeader />
             <SwipeNavigator>{children}</SwipeNavigator>
           </div>
         </main>

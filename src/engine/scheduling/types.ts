@@ -23,6 +23,17 @@ export interface AverageMetrics {
   avgResponseTime: number
 }
 
+export interface QueueLevelSnapshot {
+  level: number
+  label: string
+  pids: { pid: number; tid?: number }[]
+}
+
+export interface QueueSnapshot {
+  time: number
+  queues: QueueLevelSnapshot[]
+}
+
 export interface SchedulingResult {
   timeline: TimeSlice[]
   timelinePerCore: TimeSlice[][]
@@ -30,7 +41,11 @@ export interface SchedulingResult {
   metrics: ProcessMetrics[]
   averages: AverageMetrics
   cpuUtilization: number
+  cpuUtilizationPerCore: number[]
   contextSwitches: number
+  makespan: number
+  totalBusy: number
+  queueSnapshots?: QueueSnapshot[]
 }
 
 export type ParallelismMode = 'real' | 'simulated'

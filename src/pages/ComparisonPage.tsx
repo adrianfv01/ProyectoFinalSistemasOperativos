@@ -1,9 +1,17 @@
 import { useState } from 'react'
-import { BarChart3, AlertCircle, Info, Play } from 'lucide-react'
+import { AlertCircle, FlaskConical, Info, Play } from 'lucide-react'
 import { useProcessStore } from '../store/processStore'
 import { useMemoryStore } from '../store/memoryStore'
-import { ALGORITHM_LABELS, type AlgorithmName } from '../store/schedulingStore'
-import { REPLACEMENT_LABELS, type ReplacementAlgorithmName } from '../store/memoryStore'
+import {
+  ALGORITHM_LABELS,
+  ALGORITHM_SHORT_LABELS,
+  type AlgorithmName,
+} from '../store/schedulingStore'
+import {
+  REPLACEMENT_LABELS,
+  REPLACEMENT_SHORT_LABELS,
+  type ReplacementAlgorithmName,
+} from '../store/memoryStore'
 import { getScheduler } from '../engine/scheduling/index'
 import { getReplacementAlgorithm, generateReferenceString } from '../engine/memory/index'
 import AlgorithmPicker from '../components/comparison/AlgorithmPicker'
@@ -12,6 +20,12 @@ import ComparisonChart, {
   type ReplacementComparisonEntry,
 } from '../components/comparison/ComparisonChart'
 import StickyActionBar from '../components/ui/StickyActionBar'
+import { applyPreset } from '../data/applyPreset'
+import { getPresetById } from '../data/presets'
+
+const SCHEDULING_KEYS = Object.keys(ALGORITHM_LABELS) as AlgorithmName[]
+const REPLACEMENT_KEYS = Object.keys(REPLACEMENT_LABELS) as ReplacementAlgorithmName[]
+const COMPARISON_PRESET_ID = 'comparison-mixed'
 
 export default function ComparisonPage() {
   const processes = useProcessStore((s) => s.processes)
@@ -42,6 +56,18 @@ export default function ComparisonPage() {
     })
   }
 
+  const toggleAllScheduling = () => {
+    setSelectedScheduling((prev) =>
+      prev.size === SCHEDULING_KEYS.length ? new Set() : new Set(SCHEDULING_KEYS),
+    )
+  }
+
+  const toggleAllReplacement = () => {
+    setSelectedReplacement((prev) =>
+      prev.size === REPLACEMENT_KEYS.length ? new Set() : new Set(REPLACEMENT_KEYS),
+    )
+  }
+
   const hasSelection = selectedScheduling.size > 0 || selectedReplacement.size > 0
   const totalSelected = selectedScheduling.size + selectedReplacement.size
 
@@ -54,7 +80,8 @@ export default function ComparisonPage() {
       )
       return {
         algorithm: algo,
-        label: ALGORITHM_LABELS[algo],
+        label: ALGORITHM_SHORT_LABELS[algo],
+        fullLabel: ALGORITHM_LABELS[algo],
         avgTurnaroundTime: parseFloat(result.averages.avgTurnaroundTime.toFixed(2)),
         avgWaitingTime: parseFloat(result.averages.avgWaitingTime.toFixed(2)),
         cpuUtilization: parseFloat(result.cpuUtilization.toFixed(1)),
@@ -68,7 +95,8 @@ export default function ComparisonPage() {
       const pageFaults = steps.filter((s) => s.isPageFault).length
       return {
         algorithm: algo,
-        label: REPLACEMENT_LABELS[algo],
+        label: REPLACEMENT_SHORT_LABELS[algo],
+        fullLabel: REPLACEMENT_LABELS[algo],
         pageFaults,
       }
     })
@@ -78,32 +106,46 @@ export default function ComparisonPage() {
     setHasRun(true)
   }
 
+  const loadComparisonPreset = () => {
+    const preset = getPresetById(COMPARISON_PRESET_ID)
+    if (!preset) return
+    applyPreset(preset)
+    setSchedulingResults([])
+    setReplacementResults([])
+    setHasRun(false)
+  }
+
   if (processes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-32 text-[color:var(--text-muted)]">
+      <div className="flex flex-col items-center justify-center gap-4 py-24 text-[color:var(--text-muted)]">
         <AlertCircle size={36} className="text-amber-300/80" />
         <p className="text-[16px] font-semibold text-[color:var(--text)]">Sin procesos</p>
-        <p className="text-[13px]">Primero agrega procesos en la pantalla de Captura.</p>
+        <p className="max-w-md text-center text-[13px]">
+          Agrega procesos en la pantalla de Captura, o carga un caso de prueba
+          diseñado para que cada algoritmo dé un resultado distinto.
+        </p>
+        <button onClick={loadComparisonPreset} className="btn-primary mt-2 h-11">
+          <FlaskConical size={16} />
+          Cargar caso de prueba
+        </button>
       </div>
     )
   }
 
   return (
     <div className="space-y-5">
-      <div className="hidden items-end justify-between lg:flex">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--border-strong)] bg-[color:var(--surface-2)]">
-            <BarChart3 size={18} className="text-[color:var(--accent)]" />
-          </div>
-          <div>
-            <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
-              Módulo · Comparison
-            </span>
-            <h1 className="text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
-              Comparación de algoritmos
-            </h1>
-          </div>
-        </div>
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-2)] px-4 py-2.5 text-[12.5px] text-[color:var(--text-muted)]">
+        <span>
+          ¿Las gráficas se ven planas? Carga un caso diseñado para diferenciar a
+          todos los algoritmos.
+        </span>
+        <button
+          onClick={loadComparisonPreset}
+          className="inline-flex items-center gap-1.5 rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] px-2.5 py-1.5 text-[12px] font-medium text-[color:var(--text)] transition hover:border-[color:var(--accent)]/40"
+        >
+          <FlaskConical size={14} className="text-[color:var(--accent)]" />
+          Cargar caso de prueba
+        </button>
       </div>
 
       <AlgorithmPicker
@@ -112,6 +154,8 @@ export default function ComparisonPage() {
         quantum={quantum}
         onToggleScheduling={toggleScheduling}
         onToggleReplacement={toggleReplacement}
+        onToggleAllScheduling={toggleAllScheduling}
+        onToggleAllReplacement={toggleAllReplacement}
         onQuantumChange={setQuantum}
         onCompare={handleCompare}
       />

@@ -1,8 +1,15 @@
 import type { Process } from '../processes/types'
-import type { SchedulerConfig, SchedulingResult, TimeSlice } from './types'
+import type {
+  QueueSnapshot,
+  SchedulerConfig,
+  SchedulingResult,
+  TimeSlice,
+} from './types'
 import type { SchedulableTask } from './metrics'
 import { computeMetrics, deepCopyProcesses, flattenTasks } from './metrics'
 import { mergeContiguous } from './multiCore'
+
+const MLFQ_QUEUE_LABELS = ['Nivel 1', 'Nivel 2', 'Nivel 3']
 
 interface Slot {
   task: SchedulableTask | null
@@ -31,6 +38,22 @@ export function multilevelFeedback(
     quantumLimit: quantumPerLevel[0] ?? 2,
   }))
   const perCore: TimeSlice[][] = Array.from({ length: numCores }, () => [])
+  const queueSnapshots: QueueSnapshot[] = []
+
+  const snapshot = (time: number) => {
+    queueSnapshots.push({
+      time,
+      queues: queues.map((q, i) => ({
+        level: i,
+        label: `${MLFQ_QUEUE_LABELS[i] ?? `Nivel ${i + 1}`} · q=${
+          quantumPerLevel[i] ??
+          quantumPerLevel[quantumPerLevel.length - 1] ??
+          2
+        }`,
+        pids: q.map((t) => ({ pid: t.pid, tid: t.tid })),
+      })),
+    })
+  }
 
   let currentTime = 0
   const quantumFor = (idx: number) =>
@@ -56,6 +79,7 @@ export function multilevelFeedback(
 
   while (!allDone() && safety++ < MAX) {
     enqueueArrivals(currentTime)
+    snapshot(currentTime)
 
     if (queuesEmpty() && slotsEmpty()) {
       const next = tasks
@@ -146,5 +170,9 @@ export function multilevelFeedback(
     .slice()
     .sort((a, b) => a.start - b.start || (a.core ?? 0) - (b.core ?? 0))
 
-  return computeMetrics(procs, flat, { timelinePerCore: merged, numCores })
+  return computeMetrics(procs, flat, {
+    timelinePerCore: merged,
+    numCores,
+    queueSnapshots,
+  })
 }

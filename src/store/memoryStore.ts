@@ -11,6 +11,14 @@ export const REPLACEMENT_LABELS: Record<ReplacementAlgorithmName, string> = {
   secondChance: 'Segunda Oportunidad',
 }
 
+export const REPLACEMENT_SHORT_LABELS: Record<ReplacementAlgorithmName, string> = {
+  fifo: 'FIFO',
+  lru: 'LRU',
+  optimal: 'Óptimo',
+  clock: 'Reloj',
+  secondChance: '2da Op.',
+}
+
 interface MemoryStore {
   totalMemory: number
   pageSize: number

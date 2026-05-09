@@ -1,21 +1,25 @@
 import { motion } from 'framer-motion'
 import type { Frame } from '../../engine/memory/types'
 import { getProcessColor } from '../../utils/colors'
+import ComponentLegend, { OutlineSwatch } from './ComponentLegend'
 
 interface MiniMemoryGridProps {
   frames: Frame[]
   highlightFrame?: number | null
   evictedFrame?: number | null
+  showLegend?: boolean
 }
 
 export default function MiniMemoryGrid({
   frames,
   highlightFrame = null,
   evictedFrame = null,
+  showLegend = true,
 }: MiniMemoryGridProps) {
   const cols = frames.length <= 4 ? frames.length : 4
 
   return (
+    <div className="space-y-2">
     <div className="surface-card p-3">
       <p className="mb-2 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--text-muted)]">
         Marcos de memoria
@@ -65,6 +69,37 @@ export default function MiniMemoryGrid({
           )
         })}
       </div>
+    </div>
+    {showLegend && (
+      <ComponentLegend
+        items={[
+          {
+            label: 'Cada celda (F0, F1, ...)',
+            description:
+              'Es un marco de memoria física. Solo cabe una página por marco.',
+          },
+          {
+            label: 'Color y etiqueta',
+            description:
+              'Indican qué proceso (P1, P2, ...) y qué página están cargados en ese marco.',
+          },
+          {
+            label: 'Marco gris vacío',
+            description: 'Es un marco libre, disponible para cargar una página nueva.',
+          },
+          {
+            label: 'Borde de acento',
+            description: 'El marco resaltado en color de acento es donde se acaba de cargar la página.',
+            swatch: <OutlineSwatch color="var(--accent)" />,
+          },
+          {
+            label: 'Borde rojo',
+            description: 'Marca el marco cuya página fue expulsada (víctima del reemplazo).',
+            swatch: <OutlineSwatch color="rgb(244 63 94)" />,
+          },
+        ]}
+      />
+    )}
     </div>
   )
 }

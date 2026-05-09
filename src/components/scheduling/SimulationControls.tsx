@@ -11,7 +11,7 @@ export default function SimulationControls({ variant = 'card' }: Props) {
     useSchedulingStore()
 
   const timeline = result?.timeline ?? []
-  const maxStep = Math.max(0, timeline.length - 1)
+  const maxStep = timeline.length
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -64,7 +64,13 @@ export default function SimulationControls({ variant = 'card' }: Props) {
   }
 
   const currentTime =
-    timeline.length > 0 && currentStep < timeline.length ? timeline[currentStep].start : 0
+    timeline.length === 0
+      ? 0
+      : currentStep < timeline.length
+      ? timeline[currentStep].start
+      : timeline[timeline.length - 1].end
+
+  const isFinished = timeline.length > 0 && currentStep >= timeline.length
 
   const containerClass =
     variant === 'card'
@@ -123,8 +129,14 @@ export default function SimulationControls({ variant = 'card' }: Props) {
         </span>
         <span className="text-[color:var(--border-strong)]">/</span>
         <span className="font-mono tabular-nums">
-          <span className="font-semibold text-[color:var(--text)]">{currentStep + 1}</span>
-          <span className="text-[color:var(--text-faint)]"> / {timeline.length}</span>
+          {isFinished ? (
+            <span className="font-semibold text-[color:var(--text)]">Fin</span>
+          ) : (
+            <>
+              <span className="font-semibold text-[color:var(--text)]">{currentStep + 1}</span>
+              <span className="text-[color:var(--text-faint)]"> / {timeline.length}</span>
+            </>
+          )}
         </span>
       </div>
     </div>

@@ -153,19 +153,6 @@ export default function MetricsPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="hidden lg:block"
-      >
-        <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
-          Módulo · Analytics
-        </span>
-        <h1 className="mt-1 text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
-          Métricas
-        </h1>
-      </motion.div>
-
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <SummaryCard
           icon={Cpu}

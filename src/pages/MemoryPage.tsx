@@ -64,17 +64,6 @@ export default function MemoryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="hidden items-end justify-between lg:flex">
-        <div>
-          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-[color:var(--accent)]">
-            Módulo · Memory
-          </span>
-          <h1 className="mt-1 text-[26px] font-semibold tracking-tight text-[color:var(--text)]">
-            Memoria
-          </h1>
-        </div>
-      </div>
-
       {processes.length === 0 ? (
         <div className="surface-glass p-10 text-center">
           <p className="text-[13px] text-[color:var(--text-muted)]">

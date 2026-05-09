@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:deploy": "tsc -b && VITE_HASH_ROUTER=true vite build --mode deploy",
     "preview": "vite preview"
   },
   "dependencies": {
